@@ -10,6 +10,8 @@ The prediction for each stock will then be compared over the year to see how acc
 
 
 
+
+
 Automation of Surge in Volume of a stock
 
 Uses bash to inspect if a stock has seen 20% of its average volume in the first 20 minutes of the start of the market.
