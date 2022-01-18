@@ -9,7 +9,7 @@ while read p; do
   percentage=`echo $website | sed -E 's/.*Data">(.*)%<\/span> .*/\1/'`
   lastPrice=`echo $website |  sed -e 's/.*from the last price of \(.*\).<\/p><div class="wsod_chart">.*/\1/'`
   echo here $p$median$low$high$percentage$lastPrice$annalyst
-  mysql -uroot -p'Tiger900' <<EOF
+  mysql -uroot -p'Password' <<EOF
   Use Prediction;
   Insert into NasdaqPredictions Values ('$p',$high,$low,$median,$percentage,$lastPrice,$annalyst);
 EOF
