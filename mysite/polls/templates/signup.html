@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load polls_template-filters %}
+
+<link rel="stylesheet" type="text/css" href="{% static '/css/main.css' %}">
+
+<form method="POST" action="">
+<div class="row d-flex justify-content-center">
+    
+    <div class="content-section mb-4" style="text-align:center">
+        <legend class="border-bottom mb-4">Register</legend>
+        <div class="row  mb-4">
+            <div class="col">
+                {{ form.fname }}
+            </div>
+            <div class="col">
+                {{ form.lname }}
+            </div>
+          </div>
+        <div class="form-group  mb-4">
+            {% if form.username.errors %}
+                {{ form.username|add_attr:"form-control is-invalid" }}
+                <div class="alert alert-danger">
+                    {{ form.username.errors.as_text|cut:"*" }}
+                </div>
+            {% else %}
+                {{form.username}}
+            {% endif %}
+        </div>
+        <div class="form-group mb-4">              
+            {% if form.email.errors %}
+                {{ form.email|add_attr:"form-control is-invalid" }}
+                <div class="alert alert-danger">
+                    {{ form.email.errors.as_text|cut:"*" }}
+                </div>
+            {% else %}
+                {{form.email}}
+            {% endif %}
+        </div>
+        <div class="form-group mb-4">
+            {{ form.password }}
+        </div>
+        <button type="submit" class="btn btn-primary mb-2" >Register Account</button>
+    </div>
+</div>
+{% csrf_token %}
+</form>
+{% endblock %} -->

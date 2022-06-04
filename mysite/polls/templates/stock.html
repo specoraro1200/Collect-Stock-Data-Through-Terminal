@@ -1,0 +1,193 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block content %}
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <span></span>
+    <label for="id-of-input" style="text-align:center" class="custom-checkbox">
+      <input type="checkbox" id="id-of-input"/>
+      <i class="glyphicon glyphicon-star-empty"></i>
+      <i class="glyphicon glyphicon-star"></i>
+
+      <span>Favorite </span>
+    </label>
+    
+    <style type="text/css" >
+        .chartBox{
+            width: 900px;
+            margin: auto;
+        }
+    </style>
+    <h1 style="text-align:center">{{stock}}</h1>
+</head>
+
+
+
+<div class = "chartBox" >
+  <canvas id="myChart"></canvas> 
+</div>
+<div class = "chartBox">
+  <canvas id="barChart"></canvas>
+</div>
+
+<meta id="stock" data-name="{{stock}}">
+<meta id="high" data-name="{{high}}">
+<meta id="low" data-name="{{low}}" >
+<meta id="median" data-name="{{median}}" >
+<!--<meta id="annalyst" data-name="{{annalyst}}" >-->
+<!--<meta id="percentage" data-name="{{percentage}}">-->
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+<script>
+
+const ctx = document.getElementById('myChart').getContext('2d');
+const dtx = document.getElementById('barChart').getContext('2d');
+var stock = document.getElementById("stock").getAttribute('data-name');
+var high = "{{barChart.0}}";
+var low = "{{barChart.1}}";
+var median = "{{barChart.2}}";
+var lineHigh = "{{lineGraph.0}}";
+lineHigh = lineHigh.replaceAll("'", "").replaceAll("[","").replaceAll("]","").replaceAll(" ","");
+lineHigh = lineHigh.split(",");
+var lineLow = "{{lineGraph.1}}";
+lineLow = lineLow.replaceAll("'", "").replaceAll("[","").replaceAll("]","").replaceAll(" ","");
+lineLow = lineLow.split(",");
+var real = "{{lineGraph.2}}";
+real = real.replaceAll("'", "").replaceAll("[","").replaceAll("]","").replaceAll(" ","");
+real = real.split(",");
+var lineDate = "{{lineGraph.3|safe}}";
+lineDate = lineDate.replaceAll("'", "").replaceAll("[","").replaceAll("]","").replaceAll(" ","");
+lineDate = lineDate.split(",");
+const barChart = new Chart(dtx, {
+    type: 'bar',
+    
+    data: {
+        labels: ['High Estimate', 'Low Estimate', 'Median Estimate'],
+        datasets: [{
+            label: 'Stock Price',
+            data: [high, low, median],
+            fillOpacity: .3,
+            backgroundColor: [
+                'rgba(255, 99, 132, .9)',
+                'rgba(54, 162, 235, 0.9)',
+                'rgba(255, 206, 86, 0.9)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+            ],
+            fillOpacity : .3,
+            borderWidth: 2
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    callback: function(value, index, ticks) {
+                        return '$' + value;
+                    },
+                    beginAtZero: true
+                }
+            }]
+        },
+        legend: {
+            display: false
+        },  
+        title: {
+            fontSize:20,
+            fontStyle: 'bold',
+            display: true,
+            text: 'CNN\'s 12 Month Price Forecast for ' + stock
+        },
+             
+    }
+});
+
+
+// const DATA_COUNT = 7;
+// const NUMBER_CFG = {count: DATA_COUNT, min: -100, max: 100};
+
+// const labels = ["a","b","c","d","e","f","g"];
+// const data = {
+//   labels: labels,
+//   datasets: [
+//     {
+//       label: 'Dataset 1',
+//       data: [4,5],
+//       borderColor: 'rgba(255, 99, 132, 1)',
+//       backgroundColor: 'rgba(255, 99, 132, .9)',
+//       yAxisID: 'y',
+//     },
+//     {
+//       label: 'Dataset 2',
+//       data: [4,6],
+//       borderColor: 'rgba(255, 89, 132, 1)',
+//       backgroundColor:  'rgba(255, 99, 132, .9)',
+//       yAxisID: 'y1',
+//     }
+//   ]
+// };
+
+const myChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: lineDate,
+    datasets: [{ 
+        data: lineHigh,
+        label: "High estimate",
+        borderColor: "#3e95cd",
+        fill: false
+      }, { 
+        data: lineLow,
+        label: "Low Estimate",
+        borderColor: "#8e5ea2",
+        fill: false
+      }, { 
+         data: real,
+         label: "Real Price",
+         borderColor: "#3cba9f",
+         fill: false
+       }, //{ 
+      //   data: [40,20,10,16,24,38,74,167,508,784],
+      //   label: "Latin America",
+      //   borderColor: "#e8c3b9",
+      //   fill: false
+      // }, { 
+      //   data: [6,3,2,2,7,26,82,172,312,433],
+      //   label: "North America",
+      //   borderColor: "#c45850",
+      //   fill: false
+      // }
+    ]
+  },
+  options: {
+    title: {
+      fontSize:20,
+      fontStyle: 'bold',
+      display: true,
+      text: 'CNN Prediction of ' + stock + " over time"
+    },
+    scales: {
+      yAxes: [{
+          ticks: {
+              callback: function(value, index, ticks) {
+                  return '$' + value;
+              },
+              beginAtZero: true
+          }
+     }]
+   }
+      
+  }
+});
+
+</script>
+</html>
+{% endblock %}
