@@ -3,6 +3,7 @@ from urllib.request import Request
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 import psycopg2
+import json
 from collections import OrderedDict
 from polls.forms import SignUp, Login
 from django.contrib.auth.models import User
@@ -28,6 +29,7 @@ def arrayConverter(dict):
         ans1.append((row[0]))
     return ans1
 
+
 def frontpageStartUp():
     cur = conn.cursor()
     cur.execute("select distinct ticker from data order by ticker asc;")
@@ -38,6 +40,7 @@ def frontpageStartUp():
     a = cur.fetchall()
     ans2 = arrayConverter(a)
     return ans1,ans2
+
 
 def frontpage(request):
     stocks = frontpageStartUp()
@@ -81,7 +84,6 @@ def logoutUser(request):
     return frontpage(request)
 
 
-
 # def index(request,name):
 #     cur = conn.cursor()
 
@@ -107,6 +109,8 @@ def logoutUser(request):
 
 #     lineGraph[3].reverse()
 #     return render(request,"stock.html",{"stock" : name,"barChart" : barChart,"lineGraph":lineGraph})
+
+
 @login_required
 def favoriteAdd(request,fav):
     a = AuthUser(id = request.user.id)    
@@ -118,9 +122,18 @@ def favoriteAdd(request,fav):
         here.save()
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
+
 def favoriteList(request):
     list = Favorites.objects.filter(currentuser = request.user.id)
-    return render(request,"favorites.html",{"list":list})
+    fixedList = []
+    for row in list:
+        store = []
+        store.append(row.ticker)
+        store.append(row.currentuser.id)
+        fixedList.append(store)
+    print(fixedList)
+    return render(request,"favorites.html",{"list":fixedList})
+
 
 def index(request):
     cur = conn.cursor()
@@ -151,5 +164,3 @@ def index(request):
     lineGraph[0].reverse()
 
     return render(request,"stock.html",{"stock" : stock,"barChart" : barChart,"lineGraph":lineGraph,"filter":filter})
-
-# Create your views here.
