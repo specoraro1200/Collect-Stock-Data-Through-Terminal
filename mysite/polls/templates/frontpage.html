@@ -29,7 +29,7 @@
               {% for language in languages %}
                   "{{language}}",
               {% endfor %}
-        ];
+          ];
           $( "#tags" ).autocomplete({
             
             source: availableTags,
@@ -42,7 +42,6 @@
           var x = document.forms["results"]["searchbar"].value.toUpperCase();
           var z = y.replaceAll("'", "").replaceAll("[","").replaceAll("]","").replaceAll(" ","");
           var store = z.split(',');
-          alert($( "#tags" ).value)
           if (x == "") {
             alert("Please enter a valid ticker");
             return false;

@@ -30,4 +30,11 @@ class AuthUser(models.Model):
     class Meta:
         managed = False
         db_table = 'auth_user'
-# Create your models here.
+
+class Favorites(models.Model):
+    ticker = models.TextField(blank=True, null=True)
+    currentuser = models.ForeignKey(AuthUser, models.DO_NOTHING, db_column='currentuser')
+
+    class Meta:
+        managed = False
+        db_table = 'favorites'

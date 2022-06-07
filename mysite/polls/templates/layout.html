@@ -18,7 +18,7 @@
     {% endif %} -->
 </head>
 <body>
-  <nav class="navbar navbar-dark bg-steel fixed-top xx-large">
+  <nav class="navbar navbar-dark py-2 bg-steel fixed-top ">
       <a class="nav-item nav-link" href="/polls/frontpage/">Home</a>
       <a class="nav-item nav-link" href="/">About</a>
       <a class="navbar-brand mx-auto" href="/polls/frontpage/">CNN Stock Predictor</a>
@@ -28,7 +28,7 @@
           <a class="nav-item nav-link" href="/">Home</a>
       </div> -->
       {% if user.is_authenticated %}
-        <a class="nav-item nav-link" href="/polls/frontpage/signup/">Profile</a>
+        <a class="nav-item nav-link" href="/polls/frontpage/favorites/">Favorites</a>
         <a class="nav-item nav-link" href="/polls/frontpage/logout/">Logout</a>
       {% else %}
           <a class="nav-item nav-link" href="/polls/frontpage/signup/">Sign Up</a>

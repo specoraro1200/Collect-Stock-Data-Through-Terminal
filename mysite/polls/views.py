@@ -1,17 +1,16 @@
 from curses.ascii import SI
 from urllib.request import Request
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render
+from django.http import HttpResponse, HttpResponseRedirect
 import psycopg2
 from collections import OrderedDict
 from polls.forms import SignUp, Login
 from django.contrib.auth.models import User
-from polls.models import Data, AuthUser
+from polls.models import Data, AuthUser, Favorites
 from datetime import date
 import datetime
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password, check_password
-
 from django.core.mail import EmailMessage
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
@@ -19,6 +18,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 conn = psycopg2.connect(host="localhost", port="5432", dbname="project", user="sal", password="password")
 
@@ -28,21 +28,24 @@ def arrayConverter(dict):
         ans1.append((row[0]))
     return ans1
 
-def frontpage(request):
+def frontpageStartUp():
     cur = conn.cursor()
     cur.execute("select distinct ticker from data order by ticker asc;")
     a = cur.fetchall()
     ans1 = arrayConverter(a)
 
-    cur.execute("select ticker from data where high = (select max(high) from data);")
+    cur.execute("select distinct ticker from data where high = (select max(high) from data);")
     a = cur.fetchall()
     ans2 = arrayConverter(a)
-    return render(request,"frontpage.html",{"languages":ans1,"large":ans2[0]})
+    return ans1,ans2
+
+def frontpage(request):
+    stocks = frontpageStartUp()
+    return render(request,"frontpage.html",{"languages":stocks[0],"large":stocks[1][0]})
 
 
 def signup(request):
     form = SignUp(request.POST)
-
     if request.method == 'POST':
         user_form = SignUp(data=request.POST)
         if(user_form.is_valid()):
@@ -51,36 +54,32 @@ def signup(request):
             insert.save()
             user = authenticate(request, username=user_form.cleaned_data['username'], password=user_form.cleaned_data['password'])
             login(request, user)
-            return render(request,"frontpage.html")
+            stocks = frontpageStartUp()
+            return render(request,"frontpage.html",{"languages":stocks[0],"large":stocks[1][0]})
         else:
             return render(request,"signup.html",{"form":form})
-
     form = SignUp()
     return render(request,"signup.html",{"form":form})
 
-def loginUser(request):
-    
+
+def loginUser(request): 
     form = Login()
     if request.method == 'POST':
         user_form = Login(data = request.POST)
         if(user_form.is_valid()):
-            # user = authenticate(username = request.POST['password'])
             user = authenticate(request, username=user_form.cleaned_data['username'], password=user_form.cleaned_data['password'])
-            print(user)
-            # test = AuthUser(username = "a@a.com",password = check_password(request.POST['password'],hash request.POST['password']))
-            # print(test)
-            # user = AuthUser(email="a@a.com",password = check_password(request.POST['password'],encryptedpassword))
             login(request,user)
-            return render(request,"frontpage.html")
+            stocks = frontpageStartUp()
+            return render(request,"frontpage.html",{"languages":stocks[0],"large":stocks[1][0]})
         else:
             return render(request,"login.html",{"form":form})
-    
     return render(request,"login.html",{"form":form})
 
 
 def logoutUser(request):
     logout(request)
     return frontpage(request)
+
 
 
 # def index(request,name):
@@ -108,15 +107,29 @@ def logoutUser(request):
 
 #     lineGraph[3].reverse()
 #     return render(request,"stock.html",{"stock" : name,"barChart" : barChart,"lineGraph":lineGraph})
+@login_required
+def favoriteAdd(request,fav):
+    a = AuthUser(id = request.user.id)    
+    filter = Favorites.objects.filter(ticker = fav, currentuser = request.user.id)
+    if(filter):
+        filter.delete()
+    else:
+        here = Favorites(ticker = fav,currentuser = a)
+        here.save()
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+def favoriteList(request):
+    list = Favorites.objects.filter(currentuser = request.user.id)
+    return render(request,"favorites.html",{"list":list})
 
 def index(request):
     cur = conn.cursor()
-
     stock = None
     if request.method == 'GET':
         stock = request.GET['searchbar'].upper()
+
+    filter = Favorites.objects.filter(ticker = request.GET['searchbar'].upper(), currentuser = request.user.id)
     cur.execute("select * from data where ticker like %s order by date desc", [stock])
-    print(stock,44)
     store = cur.fetchone()
     barChart = []
     barChart.append(store[2])
@@ -137,6 +150,6 @@ def index(request):
     lineGraph[1].reverse()
     lineGraph[0].reverse()
 
-    return render(request,"stock.html",{"stock" : stock,"barChart" : barChart,"lineGraph":lineGraph})
+    return render(request,"stock.html",{"stock" : stock,"barChart" : barChart,"lineGraph":lineGraph,"filter":filter})
 
 # Create your views here.

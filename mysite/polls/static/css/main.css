@@ -26,14 +26,6 @@ legend{
   color: #cbd5db;
 }
 
-.brand {
-  position: absolute;
-  left: 50%;
-  margin-left: -50px !important;  /* 50% of your logo width */
-  display: block;
-  font-size: 100px !important;
-}
-
 .navbar-brand{
   font-size: 30px !important;
 
@@ -113,7 +105,6 @@ label input[type="checkbox"] {
 }
 
 .custom-checkbox {
-  margin-left: 2em;
   position: relative;
   cursor: pointer;
 }

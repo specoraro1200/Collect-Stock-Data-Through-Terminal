@@ -1,46 +1,76 @@
 {% extends "layout.html" %}
 {% load static %}
-
 {% block content %}
-<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <span></span>
-    <label for="id-of-input" style="text-align:center" class="custom-checkbox">
-      <input type="checkbox" id="id-of-input"/>
+  <head>
+      <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"></script>
+      <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+      <link href="https://unpkg.com/tabulator-tables@5.2.7/dist/css/tabulator.min.css" rel="stylesheet">
+      <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.2.7/dist/js/tabulator.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+      <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+      <meta charset="UTF-8">
+      <a href={% url 'polls:favorites' stock %} id = "link" ></a>
+
+      <style type="text/css" >
+          .chartBox{
+              width: 900px;
+              margin: auto;
+          }
+      </style>
+      <meta id="stock" data-name="{{stock}}">
+      <meta id="high" data-name="{{high}}">
+      <meta id="low" data-name="{{low}}">
+      <meta id="median" data-name="{{median}}">
+      
+  </head>
+    
+  
+
+  <body style="text-align:center">
+    
+    <label for="star" id = "fav" data-url={% url 'polls:favorites' stock %}  class="custom-checkbox" > {{stock}}
+    {% if filter %}
+      <input type="checkbox" id="star" checked/>
+    {% else %}
+      <input type="checkbox" id="star"/>
+    {% endif %}
       <i class="glyphicon glyphicon-star-empty"></i>
       <i class="glyphicon glyphicon-star"></i>
-
-      <span>Favorite </span>
     </label>
     
-    <style type="text/css" >
-        .chartBox{
-            width: 900px;
-            margin: auto;
-        }
-    </style>
-    <h1 style="text-align:center">{{stock}}</h1>
-</head>
+    
+    <div class = "chartBox">
+      <canvas id="myChart"></canvas> 
+    </div>
+    <div class = "chartBox">
+      <canvas id="barChart"></canvas>
+    </div>
 
+  </body>
 
-
-<div class = "chartBox" >
-  <canvas id="myChart"></canvas> 
-</div>
-<div class = "chartBox">
-  <canvas id="barChart"></canvas>
-</div>
-
-<meta id="stock" data-name="{{stock}}">
-<meta id="high" data-name="{{high}}">
-<meta id="low" data-name="{{low}}" >
-<meta id="median" data-name="{{median}}" >
-<!--<meta id="annalyst" data-name="{{annalyst}}" >-->
-<!--<meta id="percentage" data-name="{{percentage}}">-->
+  
+  <!-- <table id="table_id" class="display">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>James</td>
+            <td>24</td>
+        </tr>
+        <tr>
+            <td>Raj</td>
+            <td>25</td>
+        </tr>
+    </tbody> -->
+</table>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
 <script>
@@ -63,6 +93,13 @@ real = real.split(",");
 var lineDate = "{{lineGraph.3|safe}}";
 lineDate = lineDate.replaceAll("'", "").replaceAll("[","").replaceAll("]","").replaceAll(" ","");
 lineDate = lineDate.split(",");
+
+$('#fav').click(function() {
+  var url = $("#fav").attr("data-url");
+  document.location.href = url
+});
+
+
 const barChart = new Chart(dtx, {
     type: 'bar',
     

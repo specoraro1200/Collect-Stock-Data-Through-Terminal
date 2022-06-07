@@ -39,12 +39,6 @@ class SignUp(forms.Form):
 			raise forms.ValidationError('This username is already in use.')
 		return data
 
-	# def save(self, *args, **kwargs):
-	# 	print(3)
-	# 	self.full_clean
-	# 	return super().save(*args,**kwargs)
-
-
 class Login(forms.Form):
 	#email = forms.EmailField(label='email',widget=forms.EmailInput(attrs={'class':'form-control form-control-lg ','placeholder': 'Email'}))
 	username = forms.CharField(label='username', max_length=100,widget=forms.TextInput(attrs={'class':'form-control form-control-lg ','placeholder': 'Email or Username'}))

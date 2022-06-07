@@ -42,6 +42,8 @@ INSTALLED_APPS = [
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
+TEMPLATE_CONTEXT_PROCESSORS = 'django.core.context_processors.auth'
+
 MIDDLEWARE = [
 
     'django.middleware.security.SecurityMiddleware',
@@ -51,7 +53,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "library.apps.LibraryConfig"
 ]
 
 ROOT_URLCONF = 'mysite.urls'
