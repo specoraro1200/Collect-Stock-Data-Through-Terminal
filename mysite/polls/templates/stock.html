@@ -28,8 +28,6 @@
       
   </head>
     
-  
-
   <body style="text-align:center">
     
     <label for="star" id = "fav" data-url={% url 'polls:favorites' stock %}  class="custom-checkbox" > {{stock}}
@@ -99,7 +97,6 @@ $('#fav').click(function() {
   document.location.href = url
 });
 
-
 const barChart = new Chart(dtx, {
     type: 'bar',
     
@@ -147,30 +144,6 @@ const barChart = new Chart(dtx, {
     }
 });
 
-
-// const DATA_COUNT = 7;
-// const NUMBER_CFG = {count: DATA_COUNT, min: -100, max: 100};
-
-// const labels = ["a","b","c","d","e","f","g"];
-// const data = {
-//   labels: labels,
-//   datasets: [
-//     {
-//       label: 'Dataset 1',
-//       data: [4,5],
-//       borderColor: 'rgba(255, 99, 132, 1)',
-//       backgroundColor: 'rgba(255, 99, 132, .9)',
-//       yAxisID: 'y',
-//     },
-//     {
-//       label: 'Dataset 2',
-//       data: [4,6],
-//       borderColor: 'rgba(255, 89, 132, 1)',
-//       backgroundColor:  'rgba(255, 99, 132, .9)',
-//       yAxisID: 'y1',
-//     }
-//   ]
-// };
 
 const myChart = new Chart(ctx, {
   type: 'line',
