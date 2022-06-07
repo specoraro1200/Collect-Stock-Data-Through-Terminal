@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'polls'
 ]
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 
 TEMPLATE_CONTEXT_PROCESSORS = 'django.core.context_processors.auth'
 
