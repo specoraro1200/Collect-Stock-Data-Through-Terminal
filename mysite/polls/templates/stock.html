@@ -5,16 +5,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-      <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"></script>
-      <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
-      <link href="https://unpkg.com/tabulator-tables@5.2.7/dist/css/tabulator.min.css" rel="stylesheet">
-      <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.2.7/dist/js/tabulator.min.js"></script>
-      <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
-      <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
       <meta charset="UTF-8">
-      <a href={% url 'polls:favorites' stock %} id = "link" ></a>
+      <link href="https://unpkg.com/tabulator-tables/dist/css/tabulator.min.css" rel="stylesheet">
+      <script type="text/javascript" src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
+      <!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"></script> -->
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/helpers.esm.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
 
+      <a href={% url 'polls:favorites' stock %} id = "link" ></a>
       <style type="text/css" >
           .chartBox{
               width: 900px;
@@ -24,53 +23,32 @@
       <meta id="stock" data-name="{{stock}}">
       <meta id="high" data-name="{{high}}">
       <meta id="low" data-name="{{low}}">
-      <meta id="median" data-name="{{median}}">
-      
+      <meta id="median" data-name="{{median}}">  
   </head>
     
   <body style="text-align:center">
-    
     <label for="star" id = "fav" data-url={% url 'polls:favorites' stock %}  class="custom-checkbox" > {{stock}}
-    {% if filter %}
-      <input type="checkbox" id="star" checked/>
-    {% else %}
-      <input type="checkbox" id="star"/>
-    {% endif %}
-      <i class="glyphicon glyphicon-star-empty"></i>
-      <i class="glyphicon glyphicon-star"></i>
+      {% if filter %}
+        <input type="checkbox" id="star" checked/>
+      {% else %}
+        <input type="checkbox" id="star"/>
+      {% endif %}
+        <i class="bi bi-star-fill"></i>
+        <i class="bi bi-star"></i>
     </label>
-    
-    
-    <div class = "chartBox">
-      <canvas id="myChart"></canvas> 
+    <div id="header">{{stock}}'s stock price has been less than or equal to its low estimate for <b>{{ list.lesser }}</b> days, higher than or equal to its high estimate for 
+      <b>{{ list.greater }}</b> days, and in between its low and high estimate for <b>{{ list.middle }}</b> days.
     </div>
-    <div class = "chartBox">
-      <canvas id="barChart"></canvas>
+    <div class = "container mb-5">
+      <div class = "chartBox mb-5">
+        <canvas id="myChart"></canvas> 
+      </div>
+      <div class = "chartBox mb-5">
+        <canvas id="barChart"></canvas>
+      </div>
     </div>
-
   </body>
 
-  
-  <!-- <table id="table_id" class="display">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Age</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>James</td>
-            <td>24</td>
-        </tr>
-        <tr>
-            <td>Raj</td>
-            <td>25</td>
-        </tr>
-    </tbody> -->
-</table>
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
 <script>
 
 const ctx = document.getElementById('myChart').getContext('2d');
@@ -79,18 +57,23 @@ var stock = document.getElementById("stock").getAttribute('data-name');
 var high = "{{barChart.0}}";
 var low = "{{barChart.1}}";
 var median = "{{barChart.2}}";
-var lineHigh = "{{lineGraph.0}}";
+
+var lineHigh = "{{lineGraph.0|safe}}";
 lineHigh = lineHigh.replaceAll("'", "").replaceAll("[","").replaceAll("]","").replaceAll(" ","");
 lineHigh = lineHigh.split(",");
 var lineLow = "{{lineGraph.1}}";
 lineLow = lineLow.replaceAll("'", "").replaceAll("[","").replaceAll("]","").replaceAll(" ","");
 lineLow = lineLow.split(",");
-var real = "{{lineGraph.2}}";
+var lineMedian = "{{lineGraph.2}}";
+lineMedian = lineMedian.replaceAll("'", "").replaceAll("[","").replaceAll("]","").replaceAll(" ","");
+lineMedian = lineMedian.split(",");
+var real = "{{lineGraph.3}}";
 real = real.replaceAll("'", "").replaceAll("[","").replaceAll("]","").replaceAll(" ","");
 real = real.split(",");
-var lineDate = "{{lineGraph.3|safe}}";
+var lineDate = "{{lineGraph.4|safe}}";
 lineDate = lineDate.replaceAll("'", "").replaceAll("[","").replaceAll("]","").replaceAll(" ","");
 lineDate = lineDate.split(",");
+
 
 $('#fav').click(function() {
   var url = $("#fav").attr("data-url");
@@ -107,14 +90,14 @@ const barChart = new Chart(dtx, {
             data: [high, low, median],
             fillOpacity: .3,
             backgroundColor: [
-                'rgba(255, 99, 132, .9)',
-                'rgba(54, 162, 235, 0.9)',
-                'rgba(255, 206, 86, 0.9)'
+                "#1FA82A",
+                '#FF0000',
+                "#0000FF",
             ],
             borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
+                "#1FA82A",
+                '#FF0000',
+                "#0000FF",
             ],
             fillOpacity : .3,
             borderWidth: 2
@@ -122,14 +105,14 @@ const barChart = new Chart(dtx, {
     },
     options: {
         scales: {
-            yAxes: [{
+          y: {
                 ticks: {
+                    // Include a dollar sign in the ticks
                     callback: function(value, index, ticks) {
                         return '$' + value;
-                    },
-                    beginAtZero: true
+                    }
                 }
-            }]
+            }
         },
         legend: {
             display: false
@@ -151,30 +134,26 @@ const myChart = new Chart(ctx, {
     labels: lineDate,
     datasets: [{ 
         data: lineHigh,
-        label: "High estimate",
-        borderColor: "#3e95cd",
+        label: "High Estimate",
+        borderColor: "#1FA82A",
         fill: false
       }, { 
         data: lineLow,
         label: "Low Estimate",
-        borderColor: "#8e5ea2",
+        borderColor: "#FF0000",
         fill: false
       }, { 
          data: real,
          label: "Real Price",
-         borderColor: "#3cba9f",
+         borderColor: "#000000",
          fill: false
-       }, //{ 
-      //   data: [40,20,10,16,24,38,74,167,508,784],
-      //   label: "Latin America",
-      //   borderColor: "#e8c3b9",
-      //   fill: false
-      // }, { 
-      //   data: [6,3,2,2,7,26,82,172,312,433],
-      //   label: "North America",
-      //   borderColor: "#c45850",
-      //   fill: false
-      // }
+       }, 
+       { 
+         data: lineMedian,
+         label: "Median Estimate",
+         borderColor: "#0000FF",
+         fill: false
+       },
     ]
   },
   options: {
@@ -185,14 +164,14 @@ const myChart = new Chart(ctx, {
       text: 'CNN Prediction of ' + stock + " over time"
     },
     scales: {
-      yAxes: [{
-          ticks: {
-              callback: function(value, index, ticks) {
-                  return '$' + value;
-              },
-              beginAtZero: true
-          }
-     }]
+      y: {
+                ticks: {
+                    // Include a dollar sign in the ticks
+                    callback: function(value, index, ticks) {
+                        return '$' + value;
+                    }
+                }
+            }
    }
       
   }

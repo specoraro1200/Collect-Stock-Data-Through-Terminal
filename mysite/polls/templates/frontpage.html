@@ -1,92 +1,117 @@
 {% extends "layout.html" %}
 {% load static %}
-
+8
 {% block content %}
 <!DOCTYPE html>
+<head>
 <html lang="en">
 <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{% static '/css/main.css' %}">
-	<meta id="sal" data-name="{{languages}}" data-other="{{languages}}">
-
-<head>
-    <title>AutoComplete</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"></script>
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css" rel="stylesheet" type="text/css" />
+	  <meta id="sal" data-name="{{languages}}" data-other="{{languages}}">
+    <title>Stock Predictor</title>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"></script>
     <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css"
-        rel="stylesheet" type="text/css" />
+        rel="stylesheet" type="text/css" /> -->
 </head>
+
 <body>
-    <form action={% url 'polls:ticker'  %} style="text-align:center" onsubmit="return validateForm()" method="GET" id ="results"> {% csrf_token %}
-      
-      <input type="text" id="tags" name = "searchbar" autocomplete="on" >
-      <input type="submit">
+  <form action={% url 'polls:ticker'  %} style="text-align:center" onsubmit="return validateForm()" method="GET" id ="results" > {% csrf_token %}
+    <input type="text" id="tags" name = "searchbar" autocomplete="on" >
+    <input type="submit">
+    <div class = "d-inline">
+      <div class = "container-fluid" id = "first-container">
+        <div class = "row mt-5" id = "row">
+          <div class = "col" id ="columns" >
 
-      <script>
+    <script> 
+      var availableTags = [
+          {% for language in languages %}
+              "{{language}}",
+          {% endfor %}
+      ];
+      $( "#tags" ).autocomplete({
         
-          var availableTags = [
-              {% for language in languages %}
-                  "{{language}}",
-              {% endfor %}
-          ];
-          $( "#tags" ).autocomplete({
-            
-            source: availableTags,
-            minLength: 2
-          });
-        
+        source: availableTags,
+        minLength: 2
+      });
 
-        function validateForm() {
-          var y = document.getElementById("sal").getAttribute('data-name');
-          var x = document.forms["results"]["searchbar"].value.toUpperCase();
-          var z = y.replaceAll("'", "").replaceAll("[","").replaceAll("]","").replaceAll(" ","");
-          var store = z.split(',');
-          if (x == "") {
-            alert("Please enter a valid ticker");
-            return false;
-          }
-          
-          if(!(store.includes(x))){
-              alert("Please enter a valid ticker");
-              return false;
-          }
+      function validateForm() {
+        var y = document.getElementById("sal").getAttribute('data-name');
+        var x = document.forms["results"]["searchbar"].value.toUpperCase();
+        var z = y.replaceAll("'", "").replaceAll("[","").replaceAll("]","").replaceAll(" ","");
+        var store = z.split(',');
+        if (x == "") {
+          alert("Please enter a valid ticker");
+          return false;
         }
         
+        if(!(store.includes(x))){
+            alert("Please enter a valid ticker");
+            return false;
+        }
+      }
+      // Creating and adding data to first row of the table
+      window.onload = init;
 
-      </script>
-    </form>
+        function init(){
+          var table = document.getElementById("first-table");
+          "{% for ticker in tableData %}"
+              var row = table.insertRow(0);
+              var x = row.insertCell(0);
+              var y = row.insertCell(1); 
+              x.innerHTML = "<a style =\"color:white\" href='/polls/index/"+"{{ticker.0}}"+"' >"+"{{ticker.0}}"+"</a>";"{{ticker.0}}";
+              y.innerHTML = "{{ticker.1}}";
+          "{% endfor %}"
+          var header = table.createTHead();
+          var row = header.insertRow(0);
+          var y = row.insertCell(0);
+          var z = row.insertCell(0);
+          z.innerHTML = "Ticker";
+          y.innerHTML = "High Estimate";
+          
+          var table = document.getElementById("second-table");
+          "{% for ticker in realPrice %}"
+              var row = table.insertRow(0);
+              var x = row.insertCell(0);
+              var y = row.insertCell(1); 
+              x.innerHTML = "<a style =\"color:white\" href='/polls/index/"+"{{ticker.0}}"+"' >"+"{{ticker.0}}"+"</a>";"{{ticker.0}}";
+              y.innerHTML = "{{ticker.1}}";
+          "{% endfor %}"
+          var header = table.createTHead();
+          var row = header.insertRow(0);
+          var y = row.insertCell(0);
+          var z = row.insertCell(0);
+          z.innerHTML = "Ticker";
+          y.innerHTML = "Real Price";
+        }
+    </script>
+  </form>
+<div class = "d-inline">
+  <div class = "container-fluid" id = "first-container">
+    <div class = "row mt-5" id = "row">
+      <div class = "col" id ="columns" >
+        <table class="table table-dark" id = "first-table">
+        </table>
+      </div>
+      <div class = "col">
+        <table class=" table table-dark " id = "second-table">
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class = "container-fluid" id = "first-container">
+</div>
+
+</div>
 </body>
+
+
 <h2>Largest Stock Price Estimate : 	{{ large }} </h2>
-
-
 </html>
 
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
-<!--<form action="{% url 'polls:index' %}" method="POST" id="signup">-->
-<!--	{% csrf_token %}-->
-<!--	<h1>Sign Up</h1>-->
-<!--	<div class="field">-->
-<!--		<label for="name">Name:</label>-->
-<!--		<input type="text" id="name" name="name" placeholder="Enter your fullname" />-->
-<!--		<small></small>-->
-<!--	</div>-->
-<!--	<div class="field">-->
-<!--		<label for="email">Email:</label>-->
-<!--		<input type="text" id="email" name="email" placeholder="Enter your email address" />-->
-<!--		<small></small>-->
-<!--	</div>-->
-<!--	<button type="submit">Subscribe</button>-->
-<!--</form>-->

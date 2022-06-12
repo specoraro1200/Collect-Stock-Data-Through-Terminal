@@ -14,28 +14,55 @@ legend{
   text-align: center;
 }
 
-.nav-link{
-  color: #ffffff;
-}
 
 .bg-steel {
   background-color: #775f8a;
+  
+}
+
+#header {
+  width: 800px;
+  border: 2px solid rgb(0, 0, 0);
+  padding: 33px;
+  margin: auto;
+  margin-bottom: 40px;
+  margin-top: 25px;
+}
+
+.active {
+  font-weight: 700;
 }
 
 .site-header .navbar-nav .nav-link {
-  color: #cbd5db;
+  color: #eff4f7 !important;
+  font-size: 17px !important;
+}
+
+.site-header .navbar-nav .nav-link:hover {
+  font-weight: 500;
+  color: #eff4f7;
 }
 
 .navbar-brand{
-  font-size: 30px !important;
-
-}
-.site-header .navbar-nav .nav-link:hover {
-  color: #a21fbd;
+  font-size: 25px !important;
 }
 
-.site-header .navbar-nav .nav-link.active {
-  font-weight: 500;
+.navbar {
+  background-color: #242628;
+  height: 70px;
+  padding-left: 20px; 
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+  position: absolute;
+  bottom: 0;
+
+}
+
+#fav{
+  font-size: 50px;
 }
 
 .content-section {
@@ -46,56 +73,25 @@ legend{
   width : 400px;
 }
 
-.article-title {
-  color: #444444;
+#results{
+  margin: 15px;
+  padding-top:55px;
 }
 
-a.article-title:hover {
-  color: #ca4242;
-  text-decoration: none;
+#first-container{
+  padding: 0px;
+  padding-left: 0px;
+  margin-left: 0px;
 }
 
-.article-content {
-  white-space: pre-line;
+#row{
+   margin-right:0;
+   margin-left:0;
 }
 
-.article-img {
-  height: 65px;
-  width: 65px;
-  margin-right: 16px;
-}
-
-.article-metadata {
-  padding-bottom: 1px;
-  margin-bottom: 4px;
-  border-bottom: 1px solid #e3e3e3
-}
-
-.article-metadata a:hover {
-  color: #333;
-  text-decoration: none;
-}
-
-.article-svg {
-  width: 25px;
-  height: 25px;
-  vertical-align: middle;
-}
-
-.account-img {
-  height: 125px;
-  width: 125px;
-  margin-right: 20px;
-  margin-bottom: 16px;
-}
-
-.account-heading {
-  font-size: 2.5rem;
-}
-
-label {
-  /* Presentation */
-  font-size: 48px
+#columns{
+    padding-right:0;
+    padding-left:0;
 }
 
 /* Required Styling */
@@ -109,27 +105,26 @@ label input[type="checkbox"] {
   cursor: pointer;
 }
 
-.custom-checkbox .glyphicon {
-  color: gold;
+.custom-checkbox .bi {
+  color: rgb(253, 216, 2) !important;
   position: absolute;
-  top: 0.4em;
-  left: -1.25em;
+  top: 0.3em;
   font-size: 0.75em;
 }
 
-.custom-checkbox .glyphicon-star-empty {
-  color: gray;
+.custom-checkbox .bi {
+  color: rgb(12, 12, 12);
 }
 
-.custom-checkbox .glyphicon-star {
-  opacity: 0;
-  transition: opacity 0.2s ease-in-out;
+.custom-checkbox .bi-star-fill {
+  opacity: .0;
+  transition: opacity .2s ease-in-out;
 }
 
-.custom-checkbox:hover .glyphicon-star{
+.custom-checkbox:hover .bi-star-fill{
   opacity: 0.5;
 }
 
-.custom-checkbox input[type="checkbox"]:checked ~ .glyphicon-star {
+.custom-checkbox input[type="checkbox"]:checked ~ .bi-star-fill{
   opacity: 1;
 }

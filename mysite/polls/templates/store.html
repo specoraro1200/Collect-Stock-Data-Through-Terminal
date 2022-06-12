@@ -1,0 +1,139 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+ 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <input type="hidden" id="myVar" name="variable" value="{{ list }}">
+    <title>Favorites</title>
+</head>
+<div class = "container">
+    <table id="example" class="display" width="100%"></table>
+
+<script>
+    var store = [];
+
+    "{% for ticker in list %}"
+        store.push(["{{ ticker.0 }}","{{ ticker.1 }}","{{ ticker.2 }}","{{ ticker.3 }}"]); 
+    "{% endfor %}"
+
+    var tabledata = [];
+    for(var x in store){
+        tabledata.push({id:1, name:store[x][0], progress:12, gender:"$"+store[x][1], rating:"$"+store[x][2], col:"$"+store[x][3], dob:"19/02/1984", car:1});
+    }
+    $(document).ready( function () {
+        var dataSet = tabledata
+            ;
+ 
+$(document).ready(function () {
+    $('#example').DataTable({
+        data: dataSet,
+        columns: [
+            { title: 'Name' },
+            { title: 'Position' },
+            { title: 'Office' },
+            { title: 'Extn.' },
+            { title: 'Start date' },
+            { title: 'Salary' },
+        ],
+    });
+});
+        $('#table_id').DataTable();
+    } );
+    // var store = [];
+
+    // "{% for ticker in list %}"
+    //     store.push(["{{ ticker.0 }}","{{ ticker.1 }}","{{ ticker.2 }}","{{ ticker.3 }}"]); 
+    // "{% endfor %}"
+
+    // var tabledata = [];
+    // for(var x in store){
+    //     tabledata.push({id:1, name:store[x][0], progress:12, gender:"$"+store[x][1], rating:"$"+store[x][2], col:"$"+store[x][3], dob:"19/02/1984", car:1});
+    // }
+    
+   
+// });
+    
+</script>
+</html>
+{% endblock %}
+
+
+
+{% extends "layout.html" %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"></script>
+    <link href="https://unpkg.com/tabulator-tables@5.2.7/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.2.7/dist/js/tabulator.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css"/>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <input type="hidden" id="myVar" name="variable" value="{{ list }}">
+
+    <title>Favorites</title>
+</head>
+
+<body>
+    <div class = "container w-50">
+
+        <div class = "col-lg-12">
+            <div id="example-table" ></div>
+        </div>
+    </div>
+</body>
+
+<script>
+    var store = [];
+
+    "{% for ticker in list %}"
+        store.push(["{{ ticker.0 }}","{{ ticker.1 }}","{{ ticker.2 }}","{{ ticker.3 }}"]); 
+    "{% endfor %}"
+
+    var tabledata = [];
+    for(var x in store){
+        tabledata.push({id:1, name:store[x][0], progress:12, gender:"$"+store[x][1], rating:"$"+store[x][2], col:"$"+store[x][3], dob:"19/02/1984", car:1});
+    }
+    
+    var table = new Tabulator("#example-table", {
+        autoResize:false,
+        data:tabledata,           //load row data from array
+        layout:"fitColumns",      //fit columns to width of table
+        responsiveLayout:"hide",  //hide columns that dont fit on the table
+        tooltips:true,            //show tool tips on cells
+        addRowPos:"top",          //when adding a new row, add it to the top of the table
+        history:true,             //allow undo and redo actions on the table
+        pagination:"local",       //paginate the data
+        paginationSize:15,         //allow 7 rows per page of data
+        paginationCounter:"rows", //display count of paginated rows in footer
+        movableColumns:true,      //allow column order to be changed
+        initialSort:[             //set the initial sort order of the data
+            {column:"name", dir:"asc"},
+        ],
+        columns:[                 //define the table columns,formatterParams:{url:"http://127.0.0.1:8000/polls/index/"+"AAPL"}
+            {title:"Ticker",width:90 ,hozAlign:"center", field:"name",formatter:link},
+           // {title:"Task Progress", field:"progress", hozAlign:"left", formatter:"progress", editor:true},
+            {title:"High Estimate",  width:130 ,field:"gender",hozAlign:"center"},
+            {title:"Low Estimate", width:130 , field:"rating", hozAlign:"center"},
+            {title:"Median Estimate", width:150 ,field:"col",hozAlign:"center"},
+      //      {title:"Date Of Birth", field:"dob", width:130, sorter:"date", hozAlign:"center"},
+        //    {title:"Driver", field:"car", width:90,  hozAlign:"center", formatter:"tickCross", sorter:"boolean", editor:true},
+        ],
+    });
+    function link(cell, formatterParams){
+        var url = cell.getValue();
+        return "<a href='/polls/index/"+url+"'>"+url+"</a>";
+    }
+</script>
+</html>
+{% endblock %}

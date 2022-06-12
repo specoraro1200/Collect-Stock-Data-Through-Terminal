@@ -4,64 +4,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
-    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"></script>
-    <link href="https://unpkg.com/tabulator-tables@5.2.7/dist/css/tabulator.min.css" rel="stylesheet">
-    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.2.7/dist/js/tabulator.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
-
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <input type="hidden" id="myVar" name="variable" value="{{ list }}">
-
     <title>Favorites</title>
 </head>
-<body>
-<div id="example-table"></div>
-</body>
-
-
+    <style>
+        div.dataTables_wrapper{
+            width:800px;
+            margin: 0 auto;
+        }
+    </style>
+<div class = "container">
+    <table id="example" class="display" width="100%"></table>
+</div>
 <script>
     var store = [];
-
     "{% for ticker in list %}"
-        store.push(["{{ ticker.0 }}","{{ ticker.1 }}"]); 
+        store.push(["{{ ticker.0 }}","{{ ticker.1 }}","{{ ticker.2 }}","{{ ticker.3 }}","{{ticker.4}}"]); 
     "{% endfor %}"
-
     var tabledata = [];
-    alert(store);
     for(var x in store){
-        tabledata.push({id:1, name:store[x][0], progress:12, gender:"male", rating:1, col:"red", dob:"19/02/1984", car:1});
+        tabledata.push([link(store[x][0]), "$"+store[x][1],"$"+store[x][3], "$"+store[x][2], "$"+store[x][4]]);
     }
-    
-var table = new Tabulator("#example-table", {
-    data:tabledata,           //load row data from array
-    layout:"fitColumns",      //fit columns to width of table
-    responsiveLayout:"hide",  //hide columns that dont fit on the table
-    tooltips:true,            //show tool tips on cells
-    addRowPos:"top",          //when adding a new row, add it to the top of the table
-    history:true,             //allow undo and redo actions on the table
-    pagination:"local",       //paginate the data
-    paginationSize:7,         //allow 7 rows per page of data
-    paginationCounter:"rows", //display count of paginated rows in footer
-    movableColumns:true,      //allow column order to be changed
-    initialSort:[             //set the initial sort order of the data
-        {column:"name", dir:"asc"},
-    ],
-    columns:[                 //define the table columns
-        {title:"Name", field:"name"},
-        {title:"Task Progress", field:"progress", hozAlign:"left", formatter:"progress", editor:true},
-        {title:"Gender", field:"gender", width:95, editor:"select", editorParams:{values:["male", "female"]}},
-        {title:"Rating", field:"rating", formatter:"star", hozAlign:"center", width:100, editor:true},
-        {title:"Color", field:"col", width:130, editor:"input"},
-        {title:"Date Of Birth", field:"dob", width:130, sorter:"date", hozAlign:"center"},
-        {title:"Driver", field:"car", width:90,  hozAlign:"center", formatter:"tickCross", sorter:"boolean", editor:true},
-    ],
-});
+    $(document).ready( function () {
+        var dataSet = tabledata;
+            $(document).ready(function () {
+                $('#example').DataTable({
+                    "bAutoWidth": false,
+                    "rowCallback": function( row, data ) {
+                      
+                        if (Math.fround(data[4].substring(1,data[4].length)) < Math.fround(data[3].substring(1,data[3].length))){
+                            $('td', row).css('background-color', 'Red');
+                        }
+                        if (Math.fround(data[4].substring(1,data[4].length)) > Math.fround(data[1].substring(1,data[1].length))){
+                            $('td', row).css('background-color', 'Green');
+                        }
+                    },
+                    data: dataSet,
+                    columns: [
+                        { title: 'Ticker',"width": "10%" },
+                        { title: 'High Estimate',"width": "20%" },
+                        { title: 'Median Estimate',"width": "20%" },
+                        { title: 'Low Estimate.',"width": "20%" },
+                        { title: 'Real Price',"width": "20%"},
+                    ],
+                });
+            });
+    });
+    function link(url){
+        return "<a style =\"color:black\" href='/polls/index/"+url+"' >"+url+"</a>";
+    }
 </script>
 </html>
 {% endblock %}
+
