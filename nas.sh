@@ -9,6 +9,8 @@ while read p; do
 		  echo "It's there."
 		  continue
 	fi
+	#real=`echo $website | sed -e 's/.*"ToHundredth" streamFeed="BatsUS">\(.*\)<\/span><div class="wsod_quoteLabel">Delayed Data<div class="wsod_quoteLabelAsOf".*/\1/'`
+	#echo $real
 	annalyst=`echo $website | sed -e 's/.*The \(.*\) analysts offering.*/\1/'`
 	median=`echo $website | sed -e 's/.*median target of \(.*\), with a high.*/\1/'`
 	high=`echo $website | sed -e 's/.*high estimate of \(.*\) and a low.*/\1/'`
