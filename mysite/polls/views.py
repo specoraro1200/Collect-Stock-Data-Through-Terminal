@@ -7,7 +7,7 @@ import psycopg2
 from django.contrib import messages #import messages
 from django.shortcuts import redirect
 from collections import OrderedDict
-from polls.forms import SignUp, Login
+from polls.forms import SignUp, Login, InsertTicker
 from django.contrib.auth.models import User
 from polls.models import Data, AuthUser, Favorites
 from datetime import date
@@ -22,7 +22,7 @@ from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-
+import subprocess
 conn = psycopg2.connect(host="localhost", port="5432", dbname="project", user="sal", password="password")
 
 def arrayConverter(dict):
@@ -197,8 +197,36 @@ def index(request):
     return render(request,"stock.html",{"stock" : stock,"barChart" : barChart,"lineGraph":lineGraph,"filter":filter,"list":dictionary})
 
 def insert(request):
+    form = InsertTicker()
+    if request.method == 'GET':
+        cur = conn.cursor()
+        cur.execute("select distinct ticker from data order by ticker asc;")
+        a = cur.fetchall()
+        ans1 = arrayConverter(a)
+        stock = request.GET.get('search')
+        if stock is None:
+            return render(request,"insertTicker.html",{"form":form})
+        stock = stock.upper()
+        if stock in ans1:
+            messages.success(request, "This ticker is already added. Please add another ticker")
+            return render(request,"insertTicker.html",{"form":form})
+        else:
+            store = subprocess.run(["bash", "/mnt/c/Users/scpec/mysite/polls/check.sh",stock])  
+            if(store.returncode is 0):
+                messages.success(request, "This ticker has been added and CNN Stock Predictor will now keep track of this ticker")
+                file_object = open('/mnt/c/Users/scpec/Downloads/list.csv', 'a')
+                file_object.write(stock +'\n')
+                file_object.close()
+                return render(request,"insertTicker.html",{"form":form})
+            else:
+                messages.success(request, "An error occured while adding this ticker. Ensure this ticker is covered by CNN and try again")
+                return render(request,"insertTicker.html",{"form":form})
+
+    return render(request,"insertTicker.html",{"form":form})
+
+def about(request):
     
-    return render(request, 'insertTicker.html')
+    return render(request, 'about.html')    
 
 def quickLink(request,ticker):
     cur = conn.cursor()

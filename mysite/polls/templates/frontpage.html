@@ -19,7 +19,7 @@
     <div class = "d-inline">
       <div class = "container-fluid" id = "first-container">
         <div class = "row mt-5" id = "row">
-          <div class = "col" id ="columns" >
+          <div class = "col" id ="columns" > 
     <script> 
       var availableTags = [
           {% for language in languages %}
@@ -81,11 +81,13 @@
 <div class = "d-inline">
   <div class = "container-fluid" id = "first-container">
     <div class = "row mt-5" id = "row">
-      <div class = "col" id ="columns" >Top 10 Stocks with Highest Estimates
+      <div class = "col">
+        <div class = "row d-flex justify-content-center" id = "table-title">Top 10 Stocks with Highest Estimates</div>
         <table class="table table-striped table-dark" id = "first-table">
         </table>
       </div>
-      <div class = "col">Top 10 Stocks with Highest Real Price
+      <div class = "col">
+        <div class = "row  justify-content-center" id = "table-title">Top 10 Stocks with Highest Real Price</div>
         <table class=" table table-striped table-dark " id = "second-table">
         </table>
       </div>
@@ -93,7 +95,7 @@
   </div>
   <div class = "container-fluid" id = "first-container"></div>
 </div>
-<h2>Largest Stock Price Estimate : 	{{ large }} </h2>
+<!-- <h2>Largest Stock Price Estimate : 	{{ large }} </h2> -->
 </body>
 </html>
 {% endblock %}

@@ -10,15 +10,25 @@
     <input type="hidden" id="myVar" name="variable" value="{{ list }}">
     <title>Favorites</title>
 </head>
-    <style>
+    <!-- <style>
         div.dataTables_wrapper{
             width:800px;
             margin: 0 auto;
         }
-    </style>
-<div class = "container">
-    <table id="example" class="display" width="100%"></table>
+    </style> -->
+<div class = "container-fluid" style ="width: 65%">
+    <div class = "row">
+        <div class = "col-12" >
+            <div class = "row mt-2 mb-5">
+                <div class = "title d-flex justify-content-center border-bottom" id = "title">Favorites</div>
+            </div>
+        </div>
+        <div class = "col">
+            <table id="table" class="display" ></table>
+        </div>
+    </div>
 </div>
+
 <script>
     var store = [];
     "{% for ticker in list %}"
@@ -31,8 +41,8 @@
     $(document).ready( function () {
         var dataSet = tabledata;
             $(document).ready(function () {
-                $('#example').DataTable({
-                    "bAutoWidth": false,
+                $('#table').DataTable({
+                    // "bAutoWidth": false,
                     "rowCallback": function( row, data ) {
                       
                         if (Math.fround(data[4].substring(1,data[4].length)) < Math.fround(data[3].substring(1,data[3].length))){
