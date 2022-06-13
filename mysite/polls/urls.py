@@ -11,5 +11,6 @@ urlpatterns = [
             path('frontpage/', views.frontpage,name="frontpage"),
             path('frontpage/login/', views.loginUser,name="login"),
             path('frontpage/favorites/', views.favoriteList,name="list"),
-            path('frontpage/logout/', views.logoutUser,name="logout")
+            path('frontpage/logout/', views.logoutUser,name="logout"),
+            path('frontpage/insert/', views.insert,name="insert")
             ]

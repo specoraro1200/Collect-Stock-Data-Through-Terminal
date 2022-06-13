@@ -1,6 +1,5 @@
 {% extends "layout.html" %}
 {% load static %}
-8
 {% block content %}
 <!DOCTYPE html>
 <head>
@@ -12,14 +11,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"></script>
     <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css" rel="stylesheet" type="text/css" />
 	  <meta id="sal" data-name="{{languages}}" data-other="{{languages}}">
-    <title>Stock Predictor</title>
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"></script>
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css"
-        rel="stylesheet" type="text/css" /> -->
 </head>
-
-<body>
+<body>        
   <form action={% url 'polls:ticker'  %} style="text-align:center" onsubmit="return validateForm()" method="GET" id ="results" > {% csrf_token %}
     <input type="text" id="tags" name = "searchbar" autocomplete="on" >
     <input type="submit">
@@ -27,7 +20,6 @@
       <div class = "container-fluid" id = "first-container">
         <div class = "row mt-5" id = "row">
           <div class = "col" id ="columns" >
-
     <script> 
       var availableTags = [
           {% for language in languages %}
@@ -39,7 +31,6 @@
         source: availableTags,
         minLength: 2
       });
-
       function validateForm() {
         var y = document.getElementById("sal").getAttribute('data-name');
         var x = document.forms["results"]["searchbar"].value.toUpperCase();
@@ -49,23 +40,20 @@
           alert("Please enter a valid ticker");
           return false;
         }
-        
         if(!(store.includes(x))){
             alert("Please enter a valid ticker");
             return false;
         }
       }
-      // Creating and adding data to first row of the table
       window.onload = init;
-
-        function init(){
+      function init(){
           var table = document.getElementById("first-table");
           "{% for ticker in tableData %}"
               var row = table.insertRow(0);
               var x = row.insertCell(0);
               var y = row.insertCell(1); 
               x.innerHTML = "<a style =\"color:white\" href='/polls/index/"+"{{ticker.0}}"+"' >"+"{{ticker.0}}"+"</a>";"{{ticker.0}}";
-              y.innerHTML = "{{ticker.1}}";
+              y.innerHTML = "$"+"{{ticker.1}}";
           "{% endfor %}"
           var header = table.createTHead();
           var row = header.insertRow(0);
@@ -73,14 +61,13 @@
           var z = row.insertCell(0);
           z.innerHTML = "Ticker";
           y.innerHTML = "High Estimate";
-          
           var table = document.getElementById("second-table");
           "{% for ticker in realPrice %}"
               var row = table.insertRow(0);
               var x = row.insertCell(0);
               var y = row.insertCell(1); 
               x.innerHTML = "<a style =\"color:white\" href='/polls/index/"+"{{ticker.0}}"+"' >"+"{{ticker.0}}"+"</a>";"{{ticker.0}}";
-              y.innerHTML = "{{ticker.1}}";
+              y.innerHTML = "$"+"{{ticker.1}}";
           "{% endfor %}"
           var header = table.createTHead();
           var row = header.insertRow(0);
@@ -88,30 +75,25 @@
           var z = row.insertCell(0);
           z.innerHTML = "Ticker";
           y.innerHTML = "Real Price";
-        }
+      }
     </script>
   </form>
 <div class = "d-inline">
   <div class = "container-fluid" id = "first-container">
     <div class = "row mt-5" id = "row">
-      <div class = "col" id ="columns" >
-        <table class="table table-dark" id = "first-table">
+      <div class = "col" id ="columns" >Top 10 Stocks with Highest Estimates
+        <table class="table table-striped table-dark" id = "first-table">
         </table>
       </div>
-      <div class = "col">
-        <table class=" table table-dark " id = "second-table">
+      <div class = "col">Top 10 Stocks with Highest Real Price
+        <table class=" table table-striped table-dark " id = "second-table">
         </table>
       </div>
     </div>
   </div>
-  <div class = "container-fluid" id = "first-container">
+  <div class = "container-fluid" id = "first-container"></div>
 </div>
-
-</div>
-</body>
-
-
 <h2>Largest Stock Price Estimate : 	{{ large }} </h2>
+</body>
 </html>
-
 {% endblock %}

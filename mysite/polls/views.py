@@ -1,9 +1,10 @@
 from curses.ascii import SI
+from sre_constants import SUCCESS
 from urllib.request import Request
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 import psycopg2
-import json
+from django.contrib import messages #import messages
 from django.shortcuts import redirect
 from collections import OrderedDict
 from polls.forms import SignUp, Login
@@ -76,6 +77,7 @@ def frontpageStartUp():
 
 def frontpage(request):
     stocks = frontpageStartUp()
+
     return render(request,"frontpage.html",{"languages":stocks[0],"large":stocks[1][0],"tableData":stocks[2],"realPrice":stocks[3]})
 
 
@@ -125,9 +127,11 @@ def favoriteAdd(request,fav):
     filter = Favorites.objects.filter(ticker = fav, currentuser = request.user.id)
     if(filter):
         filter.delete()
+        messages.success(request, "Removed " + fav + " from favorites list.")
     else:
         here = Favorites(ticker = fav,currentuser = a)
         here.save()
+        messages.success(request, "Added " + fav + " into your favorites list.")
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 
@@ -192,6 +196,9 @@ def index(request):
             dictionary['middle'] =  dictionary.get('middle')+1
     return render(request,"stock.html",{"stock" : stock,"barChart" : barChart,"lineGraph":lineGraph,"filter":filter,"list":dictionary})
 
+def insert(request):
+    
+    return render(request, 'insertTicker.html')
 
 def quickLink(request,ticker):
     cur = conn.cursor()
