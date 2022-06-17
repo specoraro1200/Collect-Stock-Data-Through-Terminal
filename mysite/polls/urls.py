@@ -13,5 +13,6 @@ urlpatterns = [
             path('frontpage/favorites/', views.favoriteList,name="list"),
             path('frontpage/logout/', views.logoutUser,name="logout"),
             path('frontpage/insert/', views.insert,name="insert"),
-            path('frontpage/about/', views.about,name="about")
+            path('frontpage/about/', views.about,name="about"),
+            path('frontpage/advancedsearch/', views.advanced,name="advanced")
             ]

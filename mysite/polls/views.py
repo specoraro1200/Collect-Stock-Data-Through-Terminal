@@ -49,9 +49,9 @@ def frontpageStartUp():
     a = cur.fetchall()
     ans1 = arrayConverter(a)
 
-    cur.execute("select distinct ticker from data where high = (select max(high) from data);")
-    a = cur.fetchall()
-    ans2 = arrayConverter(a)
+   
+    ans2 = 3
+
 
     cur.execute("select ticker, max(high) from data group by ticker order by max(high) desc limit 10;")
     a = cur.fetchall()
@@ -70,6 +70,8 @@ def frontpageStartUp():
         store.append((row[0]))
         store.append((row[1]))
         ans4.append(store)
+
+    
     ans3.reverse()
     ans4.reverse()
     return ans1,ans2,ans3,ans4
@@ -78,7 +80,7 @@ def frontpageStartUp():
 def frontpage(request):
     stocks = frontpageStartUp()
 
-    return render(request,"frontpage.html",{"languages":stocks[0],"large":stocks[1][0],"tableData":stocks[2],"realPrice":stocks[3]})
+    return render(request,"frontpage.html",{"languages":stocks[0],"tableData":stocks[2],"realPrice":stocks[3]})
 
 
 def signup(request):
@@ -101,18 +103,21 @@ def signup(request):
     return render(request,"signup.html",{"form":form})
 
 
+def advanced(request):
+    return render(request,"advancedsearch.html")
+
+
 def loginUser(request): 
-    form = Login()
+    form = Login(request.POST)
     if request.method == 'POST':
         user_form = Login(data = request.POST)
         if(user_form.is_valid()):
             user = authenticate(request, username=user_form.cleaned_data['username'], password=user_form.cleaned_data['password'])
             login(request,user)
-            stocks = frontpageStartUp()
             return redirect('polls:frontpage')
-            #return render(request,"frontpage.html",{"languages":stocks[0],"large":stocks[1][0]})
         else:
             return render(request,"login.html",{"form":form})
+    form = Login()
     return render(request,"login.html",{"form":form})
 
 
@@ -134,7 +139,7 @@ def favoriteAdd(request,fav):
         messages.success(request, "Added " + fav + " into your favorites list.")
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
-
+@login_required(login_url='polls:signup')
 def favoriteList(request):
     cur = conn.cursor()
     list = Favorites.objects.filter(currentuser = request.user.id)
@@ -208,24 +213,23 @@ def insert(request):
             return render(request,"insertTicker.html",{"form":form})
         stock = stock.upper()
         if stock in ans1:
-            messages.success(request, "This ticker is already added. Please add another ticker")
+            messages.warning(request, "This ticker is already added. Please add another ticker")
             return render(request,"insertTicker.html",{"form":form})
         else:
             store = subprocess.run(["bash", "/mnt/c/Users/scpec/mysite/polls/check.sh",stock])  
             if(store.returncode is 0):
                 messages.success(request, "This ticker has been added and CNN Stock Predictor will now keep track of this ticker")
-                file_object = open('/mnt/c/Users/scpec/Downloads/list.csv', 'a')
+                file_object = open('/mnt/c/Users/scpec/mysite/list.csv', 'a')
                 file_object.write(stock +'\n')
                 file_object.close()
                 return render(request,"insertTicker.html",{"form":form})
             else:
-                messages.success(request, "An error occured while adding this ticker. Ensure this ticker is covered by CNN and try again")
+                messages.error(request, "An error occured while adding this ticker. Ensure this ticker is covered by CNN and try again")
                 return render(request,"insertTicker.html",{"form":form})
 
     return render(request,"insertTicker.html",{"form":form})
 
 def about(request):
-    
     return render(request, 'about.html')    
 
 def quickLink(request,ticker):

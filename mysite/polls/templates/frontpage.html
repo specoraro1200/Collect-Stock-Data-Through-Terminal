@@ -12,13 +12,18 @@
     <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css" rel="stylesheet" type="text/css" />
 	  <meta id="sal" data-name="{{languages}}" data-other="{{languages}}">
 </head>
-<body>        
+<body>     
+  <div class = "container-fluid" id = "first-container">
+    <div class = "row mt-3" id = "row">
+      <div class = "col" id ="columns" >
+        <div class = "title d-flex justify-content-center border-bottom border-dark" id = "title">CNN Stock Predictor</div>
+      </div>
+    </div>   
   <form action={% url 'polls:ticker'  %} style="text-align:center" onsubmit="return validateForm()" method="GET" id ="results" > {% csrf_token %}
-    <input type="text" id="tags" name = "searchbar" autocomplete="on" >
+    <input type="text" id="tags" name = "searchbar" placeholder=" Search ticker" autocomplete="on" >
     <input type="submit">
     <div class = "d-inline">
-      <div class = "container-fluid" id = "first-container">
-        <div class = "row mt-5" id = "row">
+        <div class = "row mt-3" id = "row">
           <div class = "col" id ="columns" > 
     <script> 
       var availableTags = [

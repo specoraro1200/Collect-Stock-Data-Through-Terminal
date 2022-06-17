@@ -1,8 +1,5 @@
 body {
-  background: #fafafa;
-  color: #333333;
-  background-color: #ffffff;
-  margin-top: 5rem;
+  background-color: #fafafa;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -51,45 +48,27 @@ legend{
   margin-top: 25px;
 }
 
-
-
 .active {
   font-weight: 700;
 }
 
-.site-header .navbar-nav .nav-link {
-  color: #eff4f7 !important;
+ .navbar-nav .nav-link {
+  color: #ffffff !important;
   font-size: 17px !important;
-}
-
-.site-header .navbar-nav .nav-link:hover {
-  font-weight: 500;
-  color: #eff4f7;
 }
 
 .navbar-brand{
   font-size: 25px !important;
+  
 }
 
-.navbar {
-  background-color: #242628;
-  height: 70px;
-  padding-left: 20px; 
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 999;
-  position: absolute;
-  bottom: 0;
-}
 
 #fav{
   font-size: 50px;
 }
 
 .content-section {
-  background: #44131304;
+  background: #ffffff;
   padding: 15px; 
   border: 1px solid #968b8ba1;
   border-radius: 12px;
@@ -112,7 +91,7 @@ legend{
 }
 
 #table-title{
-  font-size: 35px;
+  font-size: 25px;
   font-weight: 500;
 
 }
