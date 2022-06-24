@@ -1,29 +1,31 @@
 from curses.ascii import SI
 from sre_constants import SUCCESS
-from urllib.request import Request
-from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.db.models import Func
+from django.db.models.functions import Round
+from django.shortcuts import render
+from django.http import  HttpResponseRedirect
 import psycopg2
-from django.contrib import messages #import messages
+from django.contrib import messages 
 from django.shortcuts import redirect
-from collections import OrderedDict
-from polls.forms import SignUp, Login, InsertTicker
-from django.contrib.auth.models import User
+from polls.forms import SignUp, Login, InsertTicker, Search
 from polls.models import Data, AuthUser, Favorites
-from datetime import date
-import datetime
 from django.utils import timezone
-from django.contrib.auth.hashers import make_password, check_password
-from django.core.mail import EmailMessage
-from django.contrib.sites.shortcuts import get_current_site
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.template.loader import render_to_string
-from .tokens import account_activation_token
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 import subprocess
+from django.db.models import F, Q
+from django.forms import formset_factory 
+from django.db.models import Max
+from datetime import date
+
 conn = psycopg2.connect(host="localhost", port="5432", dbname="project", user="sal", password="password")
+
+
+class Round(Func):
+    function = 'ROUND'
+    template='%(function)s(%(expressions)s, 2)'
+
 
 def arrayConverter(dict):
     ans1 = []
@@ -43,44 +45,71 @@ def extractBasicStockData(stock):
     return barChart
 
 
+def convertFrontPageTableLists(a):
+    ans = []
+    for row in a:
+        print(row)
+        store = []
+        store.append((row[0]))
+        store.append((row[1]))
+        ans.append(store)
+    ans.reverse()
+    return ans
+
 def frontpageStartUp():
     cur = conn.cursor()
     cur.execute("select distinct ticker from data order by ticker asc;")
     a = cur.fetchall()
     ans1 = arrayConverter(a)
 
-   
-    ans2 = 3
+    cur.execute("select ticker, max(high) from data where date = Current_date group by ticker order by max(high) desc limit 10;")
+    query = cur.fetchall()
+    ans2 = convertFrontPageTableLists(query)
 
+    cur.execute("select ticker, max(lastprice) from data where date = Current_date group by ticker order by max(lastprice) desc limit 10;")
+    query = cur.fetchall()
+    ans3 = convertFrontPageTableLists(query)
 
-    cur.execute("select ticker, max(high) from data group by ticker order by max(high) desc limit 10;")
-    a = cur.fetchall()
-    ans3 = []
-    for row in a:
-        store = []
-        store.append((row[0]))
-        store.append((row[1]))
-        ans3.append(store)
+    cur.execute("select ticker, max(annalyst) from data where date = Current_date group by ticker order by max(annalyst) desc limit 10;")
+    query = cur.fetchall()
+    ans4 = convertFrontPageTableLists(query)
 
-    cur.execute("select ticker, max(lastprice) from data group by ticker order by max(lastprice) desc limit 10;")
-    a = cur.fetchall()
-    ans4 = []
-    for row in a:
-        store = []
-        store.append((row[0]))
-        store.append((row[1]))
-        ans4.append(store)
+    cur.execute("select ticker, replace(substr(percentage,2),',','')::DECIMAL as perc from data where date = current_date order by perc desc limit 10;")
+    query = cur.fetchall()
+    ans5 = convertFrontPageTableLists(query)
 
-    
-    ans3.reverse()
-    ans4.reverse()
-    return ans1,ans2,ans3,ans4
+    cur.execute("select ticker,max(low) from data where date = current_date group by ticker order by max(low) desc limit 10;")
+    query = cur.fetchall()
+    ans6 = convertFrontPageTableLists(query)
+
+    cur.execute("select ticker, min(high) from data where date = Current_date group by ticker order by min(high) asc limit 10;")
+    query = cur.fetchall()
+    ans7 = convertFrontPageTableLists(query)
+
+    cur.execute("select ticker, min(lastprice) from data where date = Current_date group by ticker order by min(lastprice) asc limit 10;")
+    query = cur.fetchall()
+    ans8 = convertFrontPageTableLists(query)
+
+    cur.execute("select ticker, min(annalyst) from data where date = Current_date group by ticker order by min(annalyst) asc limit 10;")
+    query = cur.fetchall()
+    ans9 = convertFrontPageTableLists(query)
+
+    cur.execute("select ticker, replace(substr(percentage,2),',','')::DECIMAL as perc from data where date = current_date order by perc asc limit 10;")
+    query = cur.fetchall()
+    ans10 = convertFrontPageTableLists(query)
+
+    cur.execute("select ticker,min(low) from data where date = current_date group by ticker order by min(low) asc limit 10;")
+    query = cur.fetchall()
+    ans11 = convertFrontPageTableLists(query)
+
+    return ans1,ans2,ans3,ans4,ans5,ans6,ans7,ans8,ans9,ans10,ans11
 
 
 def frontpage(request):
     stocks = frontpageStartUp()
-
-    return render(request,"frontpage.html",{"languages":stocks[0],"tableData":stocks[2],"realPrice":stocks[3]})
+    return render(request,"frontpage.html",{"languages":stocks[0],"highEstimate":stocks[1],"highRealprice":stocks[2], \
+    "highAnnalyst":stocks[3],"highPercentage":stocks[4],"highLow":stocks[5],"lowEstimate":stocks[6],"lowRealPrice":stocks[7], \
+    "lowAnnalyst":stocks[8], "lowPercentage":stocks[9],"lowLow":stocks[10]})
 
 
 def signup(request):
@@ -92,19 +121,54 @@ def signup(request):
             username=user_form.cleaned_data['username'],password=make_password(user_form.cleaned_data['password']),is_superuser = False,is_staff=False,is_active= True,date_joined=timezone.now())
             insert.save()
             user = authenticate(request, username=user_form.cleaned_data['username'], password=user_form.cleaned_data['password'])
-            # login(request, user)
-            # stocks = frontpageStartUp()
-            #return render(request,"login.html")
             return redirect('polls:login')
-            #return render(request,"frontpage.html",{"languages":stocks[0],"large":stocks[1][0]})
         else:
             return render(request,"signup.html",{"form":form})
     form = SignUp()
     return render(request,"signup.html",{"form":form})
 
 
-def advanced(request):
-    return render(request,"advancedsearch.html")
+def formset_view(request):
+    context ={}
+    GeeksFormSet = formset_factory(Search,extra = 1)
+    formset = GeeksFormSet(request.POST or None)
+    results = False
+    if formset.is_valid():
+        counter = 0
+        Qr = None
+        for form in formset:
+            if(form.cleaned_data['symbol'] == ' '):
+                a = form.cleaned_data['primary']
+            else:
+                a = form.cleaned_data['primary'] + form.cleaned_data['symbol']
+            q = Q(**{"%s" % a:F(form.cleaned_data['secondary'])})
+            counter += 1
+            if Qr:
+                Qr = Qr & q # or & for filtering
+            else:
+                Qr = q
+            formset = GeeksFormSet()
+
+        primary = form.cleaned_data['primary']
+        symbol = form.cleaned_data['symbol']
+        secondary = form.cleaned_data['secondary']
+        # today = form.cleaned_data['today']
+        # if(today == True):
+        #     Qr = Qr & Q(date = date.today())
+        if(symbol == '__lt'):
+            results = Data.objects.filter(Qr).values('ticker').annotate(Max('date'),Max('lastprice'),Max('median'),Max('low'),Max('high'),store=Round((Max(F(secondary))-Max(F(primary))))).order_by('ticker')        
+        elif(symbol == '__gt'):
+            results = Data.objects.filter(Qr).values('ticker').annotate(Max('date'),Max('lastprice'),Max('median'),Max('low'),Max('high'),store=Round((Max(F(primary))-Max(F(secondary))))).order_by('ticker')
+        elif(symbol == ' '):
+            results = Data.objects.filter(Qr).values('ticker').annotate(Max('date'),Max('lastprice'),Max('median'),Max('low'),Max('high'),store=Round((Max(F(primary))-Max(F(secondary))))).order_by('ticker')
+        print(results.query)
+        if results:
+            return render(request, "advancedsearchGraph.html",{"results":results})
+        elif(results is not False and len(results) == 0):
+            messages.error(request, "Search returned zero results")
+        
+    context['formset']= formset
+    return render(request, "advancedsearch.html", context)
 
 
 def loginUser(request): 
@@ -139,6 +203,7 @@ def favoriteAdd(request,fav):
         messages.success(request, "Added " + fav + " into your favorites list.")
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
+
 @login_required(login_url='polls:signup')
 def favoriteList(request):
     cur = conn.cursor()
@@ -169,6 +234,8 @@ def index(request):
     barChart.append(store[2])
     barChart.append(store[3])
     barChart.append(store[4])
+    rating = store[9]
+
     cur.execute("select * from data where ticker like %s order by date desc", [stock])
     store = cur.fetchall()
     lineGraph = [[],[],[],[],[]]
@@ -199,7 +266,8 @@ def index(request):
             dictionary['greater'] =  dictionary.get('greater')+1
         else:
             dictionary['middle'] =  dictionary.get('middle')+1
-    return render(request,"stock.html",{"stock" : stock,"barChart" : barChart,"lineGraph":lineGraph,"filter":filter,"list":dictionary})
+    return render(request,"stock.html",{"stock" : stock,"barChart" : barChart,"lineGraph":lineGraph,"filter":filter,"list":dictionary,"rating":rating})
+
 
 def insert(request):
     form = InsertTicker()
@@ -229,8 +297,10 @@ def insert(request):
 
     return render(request,"insertTicker.html",{"form":form})
 
+
 def about(request):
     return render(request, 'about.html')    
+
 
 def quickLink(request,ticker):
     cur = conn.cursor()
@@ -241,6 +311,8 @@ def quickLink(request,ticker):
     barChart.append(store[2])
     barChart.append(store[3])
     barChart.append(store[4])
+    rating = store[9]
+    
     cur.execute("select * from data where ticker like %s order by date desc", [ticker])
     store = cur.fetchall()
     lineGraph = [[],[],[],[],[]]
@@ -272,4 +344,4 @@ def quickLink(request,ticker):
         else:
             dictionary['middle'] =  dictionary.get('middle')+1
 
-    return render(request,"stock.html",{"stock" : ticker,"barChart" : barChart,"lineGraph":lineGraph,"filter":filter,"list":dictionary})
+    return render(request,"stock.html",{"stock" : ticker,"barChart" : barChart,"lineGraph":lineGraph,"filter":filter,"list":dictionary,"rating":rating})

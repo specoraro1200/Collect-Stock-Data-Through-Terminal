@@ -10,13 +10,7 @@
     <input type="hidden" id="myVar" name="variable" value="{{ list }}">
     <title>Favorites</title>
 </head>
-    <!-- <style>
-        div.dataTables_wrapper{
-            width:800px;
-            margin: 0 auto;
-        }
-    </style> -->
-<div class = "container-fluid" style ="width: 65%">
+    <div class = "container-fluid pt-3 " style ="width: 60%">
     <div class = "row">
         <div class = "col-12" >
             <div class = "row pt-3 mb-5">
@@ -33,6 +27,7 @@
     var store = [];
     "{% for ticker in list %}"
         store.push(["{{ ticker.0 }}","{{ ticker.1 }}","{{ ticker.2 }}","{{ ticker.3 }}","{{ticker.4}}"]); 
+        
     "{% endfor %}"
     var tabledata = [];
     for(var x in store){

@@ -15,7 +15,7 @@ h1, h2, h3, h4, h5, h6 {
   color: inherit;
   padding: 0; 
   padding-bottom:10px;
-  font-size: 50px !important;
+  font-size: 47px !important;
   margin : auto;
   /* margin-left: 50px; */
   /* border: 2px solid rgb(0, 0, 0);   */
@@ -62,17 +62,15 @@ legend{
   
 }
 
-
 #fav{
   font-size: 50px;
 }
 
 .content-section {
   background: #ffffff;
-  padding: 15px; 
   border: 1px solid #968b8ba1;
   border-radius: 12px;
-  width : 400px;
+  max-width : 400px;
 }
 
 #results{
@@ -80,12 +78,12 @@ legend{
   padding-top:55px;
 }
 
-#row{
+#favorite_row{
    margin-right:20PX;
    margin-left:20PX;
 }
 
-#columns{
+#favorite_columns{
   padding-right:0;
   padding-left:0;
 }
@@ -93,8 +91,9 @@ legend{
 #table-title{
   font-size: 25px;
   font-weight: 500;
-
 }
+
+/* All custom-checkboxes + anything below this comment are for the favorite star on a stock page */
 
 label input[type="checkbox"] {
   display: none;

@@ -1,9 +1,8 @@
 from django.urls import path
-
 from . import views
 
+
 urlpatterns = [
-           # path('index/<str:name>/', views.index,name="ticker"),
             path('index/', views.index,name="ticker"),
             path('index/add/<str:fav>/', views.favoriteAdd,name="favorites"),
             path('index/<str:ticker>/',views.quickLink,name="link"),
@@ -14,5 +13,5 @@ urlpatterns = [
             path('frontpage/logout/', views.logoutUser,name="logout"),
             path('frontpage/insert/', views.insert,name="insert"),
             path('frontpage/about/', views.about,name="about"),
-            path('frontpage/advancedsearch/', views.advanced,name="advanced")
+            path('frontpage/advancedsearch/', views.formset_view,name="advanced")
             ]

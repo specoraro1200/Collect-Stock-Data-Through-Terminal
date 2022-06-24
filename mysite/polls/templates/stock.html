@@ -10,7 +10,8 @@
       <script type="text/javascript" src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
-
+      <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+     
       <a href={% url 'polls:favorites' stock %} id = "link" ></a>
       <style type="text/css" >
           .chartBox{
@@ -35,9 +36,24 @@
                 </div>
               {% endfor %}
             {% endif %}
-      </div>
+      </div> 
+
+      {% if rating|stringformat:'s' == "Buy" %}
+        <span class="bi bi-arrow-up" title = "BRUH" style='cursor:pointer;font-size:42px; color:rgb(15, 153, 21);'></span>
+        <div id="hoverText">
+          <span title="hover text">Here goes the text</span>
+     </div>
+      {% elif rating|stringformat:'s' == "Sell" %}
+        <span class="bi bi-arrow-down" title = "BRUH" style='cursor:pointer;font-size:42px; color:rgb(199, 15, 15);'></span>
+      {% elif rating|stringformat:'s' == "Outperform" %}
+        <span style='font-size:48px;color:rgb(81, 240, 88);'>&#8673;</span>
+      {% elif rating|stringformat:'s' == "Underperform" %}
+      <span style='font-size:48px;color:rgb(214, 62, 62);'>&#8675;</span>
+      {% endif %}
       
-        <label for="star" id = "fav" data-url={% url 'polls:favorites' stock %}  class="custom-checkbox" > {{stock}}
+        <label for="star" id = "fav" data-url={% url 'polls:favorites' stock %}  class="custom-checkbox" > 
+          
+          {{ stock }}
           {% if filter %}
             <input type="checkbox" id="star" checked/>
           {% else %}
@@ -46,6 +62,7 @@
             <i class="bi bi-star-fill"></i>
             <i class="bi bi-star"></i>
         </label>
+        
       <!-- <div class = "row">
         <div class="card" style="width: 18rem;">
           <div class="card-body">
@@ -84,6 +101,8 @@
   var lineHigh = "{{lineGraph.0|safe}}";
   lineHigh = lineHigh.replaceAll("'", "").replaceAll("[","").replaceAll("]","").replaceAll(" ","");
   lineHigh = lineHigh.split(",");
+ 
+  console.log(lineHigh)
   var lineLow = "{{lineGraph.1}}";
   lineLow = lineLow.replaceAll("'", "").replaceAll("[","").replaceAll("]","").replaceAll(" ","");
   lineLow = lineLow.split(",");
@@ -102,6 +121,7 @@
     var url = $("#fav").attr("data-url");
     document.location.href = url
   });
+
 
 const barChart = new Chart(dtx, {
     type: 'bar',

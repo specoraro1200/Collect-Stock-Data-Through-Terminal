@@ -1,10 +1,7 @@
 from django import forms
-from polls.models import Data, AuthUser
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
-from django.core.validators import validate_email
-from django.contrib.auth import authenticate, login
-from urllib.request import Request
+from polls.models import AuthUser
+from django.contrib.auth import authenticate
+
 
 def updateEmail():
 	email = AuthUser.objects.values('email')
@@ -13,12 +10,35 @@ def updateEmail():
 		validateEmail.append(x['email'])
 	return validateEmail
 
+
 def updateUsername():
 	username = AuthUser.objects.values('username')
 	validateUsername = []
 	for x in username:
 		validateUsername.append(x['username'])
 	return validateUsername
+
+
+indicator = [
+    ('high', 'Estimated High'),
+    ('low', 'Estimated Low'),
+    ('median', 'Estimated Median'),
+    ('lastprice', 'Real Price'),
+    ]
+
+
+symbol= [
+    ('__gt', 'higher than'),
+    ('__lt', 'less than'),
+    (' ', 'equal to'),
+    ]
+
+
+class Search(forms.Form):
+    primary = forms.ChoiceField(label='' ,choices=indicator)
+    symbol =  forms.ChoiceField(label='' ,choices=symbol)
+    secondary = forms.ChoiceField(label='',choices=indicator)
+
 
 class SignUp(forms.Form):
 	email = forms.EmailField(label='email',widget=forms.EmailInput(attrs={'class':'form-control form-control-lg ','placeholder': 'Email'}))
@@ -41,15 +61,16 @@ class SignUp(forms.Form):
 			raise forms.ValidationError('This username is already in use.')
 		return data
 
+
 class InsertTicker(forms.Form):
 	ticker = forms.CharField(label='username', max_length=10,widget=forms.TextInput(attrs={'class':'form-control form-control-lg ','placeholder': 'Ticker ID'}))
+
 
 class Login(forms.Form):
 	username = forms.CharField(label='username', max_length=100,widget=forms.TextInput(attrs={'class':'form-control form-control-lg ','placeholder': 'Email or Username'}))
 	password = forms.CharField(label='password', max_length=100,widget=forms.PasswordInput(attrs={'class':'form-control form-control-lg ','placeholder': 'Password'}))
 	
 	def clean(self):
-		validateUsername = updateUsername()
 		cleanUsername = self.cleaned_data['username']
 		user = authenticate(username=cleanUsername, password=self.cleaned_data['password'])
 		if(user is None):

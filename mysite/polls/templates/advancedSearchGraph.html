@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class = "container " >
+        <div class = "row" >
+            <div class = "col-12" >
+                <div class = "row pt-3 mb-5">
+                    <div class = "title d-flex justify-content-center border-bottom border-dark" id = "title">Results</div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <div class = "container " style="max-width:850px" >
+        <table id="table" class="display" width = "100%"></table>
+    </div>
+<script>
+    var store = [];
+        "{% for stock in results %}"
+            store.push([link("{{ stock.ticker }}"),"{{ stock.store }}","{{ stock.high__max }}","{{ stock.low__max }}","{{stock.median__max}}","{{stock.lastprice__max}}","{{stock.date__max}}"]);    
+        "{% endfor %}"
+        var tabledata = [];
+        for(var x in store){
+            tabledata.push([(store[x][0]), "$"+store[x][1],"$"+store[x][2], "$"+store[x][3], "$"+store[x][4],"$"+store[x][5],store[x][6]]);
+        }
+    $(document).ready( function () {
+
+        var dataSet = tabledata;
+            $(document).ready(function () {
+                $('#table').DataTable({
+                  
+                    "rowCallback": function( row, data ) {
+                    },
+                    
+                    data: dataSet,
+                    columns: [
+                        { title: 'Ticker',"width": "10%" },
+                        { title: 'Difference',"width": "1%" },
+                        { title: 'High Estimate',"width": "1%" },
+                        { title: 'Low Estimate.',"width": "1%" },
+                        { title: 'Median Price',"width": "1%"},
+                        { title: 'Real Price',"width": "1%"},
+                        { title: 'Latest Date of occurence',"width": "1%"},
+                        
+                    ],
+                });
+            });
+    });
+    function link(url){
+        return "<a style =\"color:black\" href='/polls/index/"+url+"' >"+url+"</a>";
+    }
+</script>
+</body>
+</html>
+{% endblock %}
