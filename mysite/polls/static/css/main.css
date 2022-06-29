@@ -40,12 +40,13 @@ legend{
 }
 
 #header {
-  width: 800px;
+  /* width: 800px; */
   border: 2px solid rgb(0, 0, 0);
   padding: 33px;
-  margin: auto;
+  /* margin: auto; */
   margin-bottom: 40px;
   margin-top: 25px;
+  /* margin-left:550px; */
 }
 
 .active {

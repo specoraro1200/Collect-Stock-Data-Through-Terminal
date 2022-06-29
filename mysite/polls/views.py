@@ -152,6 +152,7 @@ def formset_view(request):
         primary = form.cleaned_data['primary']
         symbol = form.cleaned_data['symbol']
         secondary = form.cleaned_data['secondary']
+
         # today = form.cleaned_data['today']
         # if(today == True):
         #     Qr = Qr & Q(date = date.today())
@@ -235,7 +236,7 @@ def index(request):
     barChart.append(store[3])
     barChart.append(store[4])
     rating = store[9]
-
+    annalysts = store[7]
     cur.execute("select * from data where ticker like %s order by date desc", [stock])
     store = cur.fetchall()
     lineGraph = [[],[],[],[],[]]
@@ -266,7 +267,8 @@ def index(request):
             dictionary['greater'] =  dictionary.get('greater')+1
         else:
             dictionary['middle'] =  dictionary.get('middle')+1
-    return render(request,"stock.html",{"stock" : stock,"barChart" : barChart,"lineGraph":lineGraph,"filter":filter,"list":dictionary,"rating":rating})
+    return render(request,"stock.html",{"stock" : stock,"barChart" : barChart,"lineGraph":lineGraph,"filter":filter, \
+        "list":dictionary,"rating":rating, "annalysts":annalysts})
 
 
 def insert(request):
@@ -299,7 +301,12 @@ def insert(request):
 
 
 def about(request):
-    return render(request, 'about.html')    
+    cur = conn.cursor()
+    cur.execute("select count(distinct ticker) from data;")
+    number = cur.fetchone()
+    cur.execute("select count(ticker) from data;")
+    total = cur.fetchone()
+    return render(request, 'about.html',{"number":number[0],"total":total[0]})    
 
 
 def quickLink(request,ticker):
@@ -312,7 +319,8 @@ def quickLink(request,ticker):
     barChart.append(store[3])
     barChart.append(store[4])
     rating = store[9]
-    
+    annalysts = store[7]
+
     cur.execute("select * from data where ticker like %s order by date desc", [ticker])
     store = cur.fetchall()
     lineGraph = [[],[],[],[],[]]
@@ -344,4 +352,5 @@ def quickLink(request,ticker):
         else:
             dictionary['middle'] =  dictionary.get('middle')+1
 
-    return render(request,"stock.html",{"stock" : ticker,"barChart" : barChart,"lineGraph":lineGraph,"filter":filter,"list":dictionary,"rating":rating})
+    return render(request,"stock.html",{"stock" : ticker,"barChart" : barChart,"lineGraph": \
+    lineGraph,"filter":filter,"list":dictionary,"rating":rating, "annalysts":annalysts})

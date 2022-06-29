@@ -5,90 +5,100 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-      <meta charset="UTF-8">
-      <link href="https://unpkg.com/tabulator-tables/dist/css/tabulator.min.css" rel="stylesheet">
-      <script type="text/javascript" src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
-      <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
-     
-      <a href={% url 'polls:favorites' stock %} id = "link" ></a>
-      <style type="text/css" >
-          .chartBox{
-              width: 900px;
-              margin: auto;
-          }
-      </style>
-      <meta id="stock" data-name="{{stock}}">
-      <meta id="high" data-name="{{high}}">
-      <meta id="low" data-name="{{low}}">
-      <meta id="median" data-name="{{median}}">  
+    <meta charset="UTF-8">
+    <link href="https://unpkg.com/tabulator-tables/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+    
+    <a href={% url 'polls:favorites' stock %} id = "link" ></a>
+    <style type="text/css" >
+        .chartBox{
+            width: 1000px;
+            margin:auto;
+        }
+    </style>
+    <meta id="stock" data-name="{{stock}}">
+    <meta id="high" data-name="{{high}}">
+    <meta id="low" data-name="{{low}}">
+    <meta id="median" data-name="{{median}}">  
   </head>
 
-  <body style="text-align:center">
-    <div role="main" class="container" id = "bruh">
-      <div class="row pt-3">
-            {% if messages %}
-              {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  {{ message }}
-                </div>
-              {% endfor %}
-            {% endif %}
+  <body>
+    <div class="container-fluid" style = "max-width: 1550px" >
+      <div class="row pt-4 text-center" style = "margin:auto">
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
       </div> 
-
-      {% if rating|stringformat:'s' == "Buy" %}
-        <span class="bi bi-arrow-up" title = "BRUH" style='cursor:pointer;font-size:42px; color:rgb(15, 153, 21);'></span>
-        <div id="hoverText">
-          <span title="hover text">Here goes the text</span>
-     </div>
-      {% elif rating|stringformat:'s' == "Sell" %}
-        <span class="bi bi-arrow-down" title = "BRUH" style='cursor:pointer;font-size:42px; color:rgb(199, 15, 15);'></span>
-      {% elif rating|stringformat:'s' == "Outperform" %}
-        <span style='font-size:48px;color:rgb(81, 240, 88);'>&#8673;</span>
-      {% elif rating|stringformat:'s' == "Underperform" %}
-      <span style='font-size:48px;color:rgb(214, 62, 62);'>&#8675;</span>
-      {% endif %}
-      
-        <label for="star" id = "fav" data-url={% url 'polls:favorites' stock %}  class="custom-checkbox" > 
-          
-          {{ stock }}
-          {% if filter %}
-            <input type="checkbox" id="star" checked/>
-          {% else %}
-            <input type="checkbox" id="star"/>
+      <div class = "row" style="text-align:center">
+        <div class = "col">
+          {% if rating|stringformat:'s' == "Buy" %}
+            <span class="bi bi-arrow-up" data-toggle="tooltip" data-placement="top" title="Buy Rating from {{annalysts}} annalysts" style='cursor:pointer;font-size:42px; color:rgb(15, 153, 21);'></span>
+          {% elif rating|stringformat:'s' == "Sell" %}
+            <span class="bi bi-arrow-down" data-toggle="tooltip" data-placement="top" title="Sell Rating from {{annalysts}} annalysts" style='cursor:pointer;font-size:42px; color:rgb(199, 15, 15);'></span>
+          {% elif rating|stringformat:'s' == "Outperform" %}
+            <span data-toggle="tooltip" data-placement="top" title="Outperform Rating from {{analysts}} annalysts" style='font-size:48px;color:rgb(81, 240, 88);'>&#8673;</span>
+          {% elif rating|stringformat:'s' == "Underperform" %}
+          <span data-toggle="tooltip" data-placement="top" title="Underperform Rating from {{annalysts}} annalysts" style='font-size:48px;color:rgb(214, 62, 62);'>&#8675;</span>
+          {% elif rating|stringformat:'s' == "Hold" %}
+          <span class="bi bi-circle-fill" data-toggle="tooltip"  data-placement="top" title="Hold Rating from {{annalysts}} annalysts" style='font-size:40px;color:rgb(119, 119, 119);'></span>
           {% endif %}
-            <i class="bi bi-star-fill"></i>
-            <i class="bi bi-star"></i>
-        </label>
-        
-      <!-- <div class = "row">
-        <div class="card" style="width: 18rem;">
-          <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
+          <label for="star" id = "fav" data-url={% url 'polls:favorites' stock %}  class="custom-checkbox" > 
+            {{ stock }}
+            {% if filter %}
+              <input type="checkbox" id="star" checked/>
+            {% else %}
+              <input type="checkbox" id="star"/>
+            {% endif %}
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star"></i>
+          </label>
         </div>
-      </div> -->
-      <div class = "row">
-        <div id="header"><a href="https://money.cnn.com/quote/forecast/forecast.html?symb={{stock}}" style = "color:black">{{stock}}'s</a> stock price has been less than or equal to its low estimate for <b>{{ list.lesser }}</b> days, higher than or equal to its high estimate for 
-          <b>{{ list.greater }}</b> days, and in between its low and high estimate for <b>{{ list.middle }}</b> days. <br>
+      </div>
+      <div class="row flex justify-content-center" >
+        <!--Grid column-->
+        <div class = "col-md-2" style = "visibility: hidden;" >
         </div>
-        <div class = "container mb-5">
-          <div class = "chartBox mb-5">
+        <div class="col-6 pt-2" >
+          <div id="header"><a href="https://money.cnn.com/quote/forecast/forecast.html?symb={{stock}}" style = "color:black">{{stock}}'s</a> stock price has been less than or equal to its low estimate for <b>{{ list.lesser }}</b> days, higher than or equal to its high estimate for 
+            <b>{{ list.greater }}</b> days, and in between its low and high estimate for <b>{{ list.middle }}</b> days. <br>
+          </div> 
+        </div>
+        <!--Grid column-->
+        <div class = "col-md-2 pull-right" style = "width:300px;" >
+          <canvas id="pie-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+    <div class="container-fluid" style="max-width:1100px; ">
+   
+      <div class = "row mb-5" style = "margin:0;">
+        <div class = "col mb-3">
+          <div class = "chartBox">
             <canvas id="myChart"></canvas> 
           </div>
-          <div class = "chartBox mb-5">
+        </div>
+        <div class = "row">
+          <div class = "chartBox" >
             <canvas id="barChart"></canvas>
           </div>
         </div>
       </div>
     </div>
   </body>
-<script>
 
+<script>
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
 
 
   const ctx = document.getElementById('myChart').getContext('2d');
@@ -160,17 +170,22 @@ const barChart = new Chart(dtx, {
         legend: {
             display: false
         },  
-        title: {
-            fontSize:20,
+        plugins: {
+            title: {
+              font: {
+                size: 25
+              },
             fontStyle: 'bold',
             display: true,
-            text: 'CNN\'s 12 Month Price Forecast for ' + stock
-        },
-             
+            text: 'Today\'s Price Forecast for ' + stock
+            }
+        }
     }
 });
 
-
+options: {
+        
+    }
 const myChart = new Chart(ctx, {
   type: 'line',
   data: {
@@ -200,25 +215,47 @@ const myChart = new Chart(ctx, {
     ]
   },
   options: {
-    title: {
-      fontSize:20,
-      fontStyle: 'bold',
-      display: true,
-      text: 'CNN Prediction of ' + stock + " over time"
-    },
-    scales: {
-      y: {
-                ticks: {
-                    // Include a dollar sign in the ticks
-                    callback: function(value, index, ticks) {
-                        return '$' + value;
-                    }
-                }
+    plugins:{
+            title: {
+                font: {
+                  size: 25
+                },
+                fontStyle: 'bold',
+                display: true,
+                text: 'CNN Prediction of ' + stock + " over time"
             }
+        },
+    scales: {
+        y: {
+          ticks: {
+              // Include a dollar sign in the ticks
+              callback: function(value, index, ticks) {
+                  return '$' + value;
+              }
+          }
+      }
    }
-      
   }
 });
+
+new Chart(document.getElementById("pie-chart"), {
+    type: 'pie',
+    data: {
+      labels: ["Higher than High Estimate", "Lower than Low Estimate", "Between High and Low Estimates"],
+      datasets: [{
+        label: "Population (millions)",
+        backgroundColor: ["#1FA82A", "#FF0000","#0000FF"],
+        data: ["{{list.greater}}","{{list.lesser}}","{{list.middle}}"]
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        
+      }
+    }
+});
+
 </script>
 </html>
 {% endblock %}

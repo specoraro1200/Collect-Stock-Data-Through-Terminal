@@ -20,6 +20,22 @@
                     <p class = "lead flex d-flex justify-content-center">The purpose of this website is to check CNN's estimation of stocks over time. All data is webscraped using bash. 
                         A stock's price should overtime hover near its median estimate, and so by webscraping CNN's estimation of various stocks, this website will check 
                         whether or not CNN's estimations are valid.</p>
+                    <div class = "row flex justify-content-center mt-5">
+                        <div class = "col">
+                            <div class="card" style="width: 20rem;">
+                                <div class="card-body text-center" >
+                                    <h5 class="card-title">Number of Stocks Tracked</h5>
+                                    <p class="card-text">{{number}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card" style="width: 20rem;">
+                            <div class="card-body text-center" >
+                                <h5 class="card-title">Total Number of Records</h5>
+                                <p class="card-text">{{total}}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

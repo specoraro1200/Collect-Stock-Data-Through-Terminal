@@ -10,14 +10,21 @@
     <input type="hidden" id="myVar" name="variable" value="{{ list }}">
     <title>Favorites</title>
 </head>
+
+</div>
     <div class = "container-fluid pt-3 " style ="width: 60%">
-    <div class = "row">
-        <div class = "col-12" >
-            <div class = "row pt-3 mb-5">
-                <div class = "title d-flex justify-content-center border-bottom border-dark" id = "title">Favorites</div>
+    <div class = "row pt-3 mb-5">
+        <div class = "title d-flex justify-content-center border-bottom border-dark pt-3 mb-2" id = "title">Favorites</div>
+        <div class="d-flex justify-content-center text-nowrap mb-4 " style ="width: 24%">
+            <div class = "row">
+            <!-- <i style='font-size:40px;color : #00ff2a; border: 2px solid rgb(0, 0, 0);vertical-align: middle;'>&#9632; <span style = "font-size:20px;color : #000000"> = Real Price < Low Estimate</span></i> -->
+             <i class="bi bi-square-fill" style = "color : #00ff2a"> <span style = "font-size:18px;color : #000000"> = Real Price > High Estimate</span></i>
+            <i class="bi bi-square-fill" style = "color : #ff0000"> <span style = "font-size:18px;color : #000000"> = Real Price < Low Estimate</i>
             </div>
         </div>
-        <div class = "col">
+            
+
+        <div class = "row">
             <table id="table" class="display" ></table>
         </div>
     </div>
@@ -41,10 +48,12 @@
                     "rowCallback": function( row, data ) {
                       
                         if (Math.fround(data[4].substring(1,data[4].length)) < Math.fround(data[3].substring(1,data[3].length))){
-                            $('td', row).css('background-color', 'Red');
+                            $(row).find('td:eq(0)').css('background-color', 'rgb(255, 0, 0)');
+                           // $('td', row).css('background-color', 'rgb(226, 23, 23)');
                         }
                         if (Math.fround(data[4].substring(1,data[4].length)) > Math.fround(data[1].substring(1,data[1].length))){
-                            $('td', row).css('background-color', 'Green');
+                            $(row).find('td:eq(0)').css('background-color', 'rgb(10, 209, 27)');
+                          //  $('td', row).css('background-color', 'Green');
                         }
                     },
                     data: dataSet,

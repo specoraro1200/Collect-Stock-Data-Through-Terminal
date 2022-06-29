@@ -34,11 +34,16 @@ symbol= [
     ]
 
 
+class InitialSearch(forms.Form):
+    primary = forms.ChoiceField(label='' ,choices=indicator)
+    symbol =  forms.ChoiceField(label='' ,choices=symbol)
+    secondary = forms.ChoiceField(label='',choices=indicator)
+    today = forms.BooleanField(initial=False)
+
 class Search(forms.Form):
     primary = forms.ChoiceField(label='' ,choices=indicator)
     symbol =  forms.ChoiceField(label='' ,choices=symbol)
     secondary = forms.ChoiceField(label='',choices=indicator)
-
 
 class SignUp(forms.Form):
 	email = forms.EmailField(label='email',widget=forms.EmailInput(attrs={'class':'form-control form-control-lg ','placeholder': 'Email'}))
